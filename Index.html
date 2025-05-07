@@ -383,7 +383,7 @@
 
         resetChatButton.addEventListener('click', async () => {
             if (YOUR_BACKEND_URL === 'https://my-gemini-chatbot.onrender.com') {
-                addMessageToChatBox('Backend URL not configured. Please update YOUR_BACKEND_URL in the script.', 'system-notification', false, true);
+                addMessageToChatBox('Hi.', 'system-notification', false, true);
                 return;
             }
             try {
@@ -474,8 +474,8 @@
         async function handleSendMessage(event) {
             if (event) event.preventDefault();
 
-            if (YOUR_BACKEND_URL === 'YOUR_RENDER_BACKEND_URL') {
-                addMessageToChatBox('Backend URL not configured. Please update YOUR_BACKEND_URL in the script.', 'system-notification', false, true);
+            if (YOUR_BACKEND_URL === 'https://my-gemini-chatbot.onrender.com') {
+                addMessageToChatBox('hi.', 'system-notification', false, true);
                 return;
             }
 
@@ -631,7 +631,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             if (YOUR_BACKEND_URL === 'https://my-gemini-chatbot.onrender.com') {
-                 addMessageToChatBox('Welcome! Please configure the YOUR_BACKEND_URL in the script to connect to the AI.', 'system-notification');
+                 addMessageToChatBox(' WelCom My Ai', 'system-notification');
             } else {
                 addInitialAiGreeting();
             }
