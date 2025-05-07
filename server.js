@@ -1,139 +1,121 @@
 // server.js
 require('dotenv').config();
 const express = require('express');
-const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require('@google/generative-ai'); // Import HarmBlockThreshold
+const cors = require('cors');
+const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require('@google/generative-ai');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// --- Gemini API Configuration ---
-const apiKey = process.env.GEMINI_API_KEY;
-if (!apiKey) {
-    console.error("Error: GEMINI_API_KEY is not set. Please check your .env file.");
-    process.exit(1);
-}
-const genAI = new GoogleGenerativeAI(apiKey);
-const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash-latest" // Or "gemini-pro"
-});
+// --- Configuration ---
+const MODEL_NAME = "gemini-1.5-flash-latest"; // Or your preferred model like "gemini-pro"
+const API_KEY = process.env.GEMINI_API_KEY;
 
-// --- Safety Settings (Optional but Recommended) ---
-const safetySettings = [
-    {
-        category: HarmCategory.HARM_CATEGORY_HARASSMENT,
-        threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-    },
-    {
-        category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-        threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-    },
-    {
-        category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-        threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-    },
-    {
-        category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-        threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-    },
-];
-
-// --- Persistent Chat Instance ---
-let chatSession; // Will hold our ongoing chat
-
-async function initializeChat() {
-    console.log("Initializing new chat session...");
-    // System instruction to guide the AI's behavior and persona
-    const systemInstruction = `You are a highly intelligent and helpful AI assistant, similar to the one the user is accustomed to interacting with.
-Your primary goal is to assist users with their queries, provide comprehensive information, generate text, and engage in natural conversation.
-If asked to generate code, please ensure it is enclosed in markdown code blocks (e.g., \`\`\`python ... \`\`\`).
-Maintain a friendly, professional, and informative tone.
-Remember the context of our current conversation to provide relevant follow-up responses.
-If you are unsure about something, it's okay to say so.
-You can refer to content from uploaded files if the user provides them and asks questions about them.
-Be ready to handle a variety of tasks like summarization, explanation, creative writing, and problem-solving.`;
-
-    chatSession = model.startChat({
-        history: [
-            { role: "user", parts: [{ text: systemInstruction }] },
-            { role: "model", parts: [{ text: "Understood! I am ready to assist you. How can I help you today?" }] }
-        ],
-        generationConfig: {
-            maxOutputTokens: 2000, // Increased for longer conversations
-            // temperature: 0.7, // Adjust for creativity vs. factuality
-        },
-        safetySettings: safetySettings // Apply safety settings
-    });
-    console.log("Chat session initialized.");
+if (!API_KEY) {
+    console.error("FATAL ERROR: GEMINI_API_KEY is not set in the .env file or environment variables.");
+    process.exit(1); // Exit if API key is missing
 }
 
-initializeChat(); // Initialize chat when the server starts
+const genAI = new GoogleGenerativeAI(API_KEY);
 
 // --- Middleware ---
-app.use(express.json({ limit: '10mb' })); // Increase limit for file content
-app.use(express.static('public'));
+app.use(cors()); // Enable CORS for all routes. For production, configure specific origins.
+app.use(express.json({ limit: '5mb' })); // To parse JSON request bodies, increased limit for file content
+app.use(express.static('public')); // Serve static files (like index.html) from the 'public' folder
 
-// --- API Endpoint for Chat ---
+// --- In-memory chat history (simple example) ---
+// For a real app, you'd use proper session management and a database.
+let chatHistories = {};
+const DEFAULT_SESSION_ID = 'default_user_session'; // Single session for this example
+
+function getChatSession(sessionId = DEFAULT_SESSION_ID) {
+    if (!chatHistories[sessionId]) {
+        console.log(`Initializing new chat session for: ${sessionId}`);
+        const model = genAI.getGenerativeModel({ model: MODEL_NAME });
+        chatHistories[sessionId] = model.startChat({
+            history: [
+                // Optional: You can prime the chat with system instructions or initial history here
+                // { role: "user", parts: [{ text: "You are a helpful and friendly AI assistant." }] },
+                // { role: "model", parts: [{ text: "Okay, I understand! How can I assist you today?" }] },
+            ],
+            generationConfig: {
+                // maxOutputTokens: 2048, // Default for gemini-1.5-flash is 8192, gemini-pro 2048
+                // temperature: 0.9,
+                // topK: 1,
+                // topP: 1,
+            },
+            safetySettings: [
+                { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+                { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+                { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+                { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+            ],
+        });
+    }
+    return chatHistories[sessionId];
+}
+
+// --- Routes ---
 app.post('/chat', async (req, res) => {
     try {
-        if (!chatSession) {
-            // This should ideally not happen if initializeChat is called on server start
-            // and after /reset-chat. But as a fallback:
-            console.warn("Chat session was not initialized. Re-initializing.");
-            await initializeChat();
-            if (!chatSession) { // Still not initialized after attempt
-                 return res.status(500).json({ error: "Chat session could not be initialized. Please try again." });
+        const userMessage = req.body.message;
+        if (!userMessage || typeof userMessage !== 'string' || userMessage.trim() === "") {
+            return res.status(400).json({ error: 'Message is required and must be a non-empty string.' });
+        }
+
+        // Simple logging of the received message (or its beginning for long messages)
+        console.log(`Received message (first 100 chars): ${userMessage.substring(0,100)}...`);
+
+        const chat = getChatSession(); // Using default session for this example
+        const result = await chat.sendMessage(userMessage);
+
+        // Check for blocked content
+        if (result.response.promptFeedback && result.response.promptFeedback.blockReason) {
+            const blockReason = result.response.promptFeedback.blockReason;
+            console.warn(`AI response blocked due to: ${blockReason}`);
+            let userFriendlyMessage = `Your request was blocked. Reason: ${blockReason}. Please try rephrasing.`;
+             if (result.response.candidates && result.response.candidates.length > 0 && result.response.candidates[0].finishReason === 'SAFETY') {
+                 userFriendlyMessage = `Your message or the model's response was blocked due to safety concerns (Reason: ${blockReason}). Please try a different prompt.`;
             }
+            return res.status(400).json({ error: userFriendlyMessage });
         }
 
-        const userInput = req.body.message;
-        if (!userInput) {
-            return res.status(400).json({ error: "Message is required" });
-        }
-
-        console.log('User input:', userInput.substring(0, 100) + (userInput.length > 100 ? "..." : "")); // Log truncated input
-
-        const result = await chatSession.sendMessage(userInput);
-        const response = await result.response;
-        const aiResponseText = response.text();
-
-        // console.log('AI Response:', aiResponseText.substring(0,100) + "...");
-        res.json({ reply: aiResponseText });
+        const aiReply = result.response.text();
+        res.json({ reply: aiReply });
 
     } catch (error) {
-        console.error('Error processing chat:', error);
-        let errorMessage = "An error occurred while processing your request.";
-        let statusCode = 500;
-
-        if (error.message) {
-            if (error.message.includes('API key not valid')) {
-                errorMessage = "Invalid API Key. Please check your configuration.";
-                statusCode = 401;
-            } else if (error.message.includes('quota')) {
-                errorMessage = "API Quota exceeded. Please check your Google Cloud Console.";
-                statusCode = 429;
-            } else if (error.message.includes('SAFETY')) {
-                // This can happen if the input or output violates safety settings
-                errorMessage = "The response was blocked due to safety settings. Please rephrase your request or try a different topic.";
-                statusCode = 400; // Bad Request, as the input might have triggered it
-            } else if (error.response && error.response.promptFeedback && error.response.promptFeedback.blockReason) {
-                // More specific safety feedback
-                errorMessage = `Request blocked: ${error.response.promptFeedback.blockReason}. Please modify your prompt.`;
-                statusCode = 400;
-            }
+        console.error('Error in /chat endpoint:', error);
+        let errorMessage = "Sorry, I encountered an error processing your request. Please try again.";
+        if (error.response && error.response.promptFeedback && error.response.promptFeedback.blockReason) {
+            errorMessage = `Your message was blocked. Reason: ${error.response.promptFeedback.blockReason}. Please rephrase your message.`;
+        } else if (error.message) {
+            errorMessage = `Server error: ${error.message}`; // More detailed for server logs, generic for client
         }
-        res.status(statusCode).json({ error: errorMessage });
+        res.status(500).json({ error: errorMessage });
     }
 });
 
-// --- Endpoint to Reset Chat (New Feature) ---
-app.post('/reset-chat', async (req, res) => {
-    console.log("Resetting chat session as per user request...");
-    await initializeChat(); // Re-initialize with the system prompt
-    res.json({ message: "Chat session has been reset successfully." });
+app.post('/reset-chat', (req, res) => {
+    try {
+        console.log("Resetting chat history for session:", DEFAULT_SESSION_ID);
+        delete chatHistories[DEFAULT_SESSION_ID];
+        getChatSession(); // Re-initialize the chat so it's ready with a fresh state
+        res.json({ message: 'Chat history reset successfully.' });
+    } catch (error) {
+        console.error("Error resetting chat:", error);
+        res.status(500).json({ error: "Failed to reset chat history." });
+    }
+});
+
+// Catch-all for serving index.html (if not found by express.static, e.g. root path)
+// This ensures your single page app's routing works if you add more complex client-side routes later.
+// For now, express.static handles it if index.html is in public/
+app.get('*', (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');
 });
 
 
-// --- Start Server ---
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    console.log(`Server listening at http://localhost:${port}`);
+    console.log(`Frontend should be available at http://localhost:${port}/`);
 });

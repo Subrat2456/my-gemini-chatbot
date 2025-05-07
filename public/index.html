@@ -414,8 +414,11 @@
         fileInput.addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (file) {
-                if (file.type.startsWith('text/') || file.type === 'application/json' ||
-                    ['.js', '.py', '.css', '.html', '.md', '.txt', '.csv', '.xml', '.java', '.c', '.cpp', '.go', '.rb', '.php'].some(ext => file.name.toLowerCase().endsWith(ext))) {
+                // Expanded list of common text-based file extensions
+                const allowedExtensions = ['.txt', '.js', '.py', '.html', '.css', '.md', '.json', '.csv', '.xml', '.java', '.c', '.cpp', '.cs', '.go', '.rb', '.php', '.swift', '.kt', '.ts', '.yaml', '.ini', '.log', '.srt', '.vtt', '.sql', '.r', '.sh', '.bat'];
+                const isAllowedExtension = allowedExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
+
+                if (file.type.startsWith('text/') || file.type === 'application/json' || isAllowedExtension) {
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         uploadedFileContent = e.target.result;
@@ -429,9 +432,9 @@
                     };
                     reader.readAsText(file);
                 } else {
-                    fileNameDisplay.textContent = "Unsupported file type.";
+                    fileNameDisplay.textContent = "Unsupported file type (Only text-based files).";
                     uploadedFileContent = null; uploadedFileName = null;
-                    fileInput.value = '';
+                    fileInput.value = ''; // Clear the input
                 }
             } else {
                 fileNameDisplay.textContent = "No file selected";
@@ -456,7 +459,15 @@
             let displayedUserMessage = userMessage;
 
             if (uploadedFileContent) {
-                const fileContext = `\n\n--- Start of content from uploaded file: ${uploadedFileName} ---\n${uploadedFileContent}\n--- End of content from uploaded file: ${uploadedFileName} ---`;
+                // Max file content length to send to avoid overly large requests (e.g., 1MB)
+                const MAX_FILE_CONTENT_LENGTH = 1 * 1024 * 1024; // 1MB
+                let fileContextSegment = uploadedFileContent;
+                if (uploadedFileContent.length > MAX_FILE_CONTENT_LENGTH) {
+                    fileContextSegment = uploadedFileContent.substring(0, MAX_FILE_CONTENT_LENGTH) + "\n... [file content truncated due to length]";
+                    console.warn(`Uploaded file content truncated to ${MAX_FILE_CONTENT_LENGTH} characters.`);
+                }
+
+                const fileContext = `\n\n--- Start of content from uploaded file: ${uploadedFileName} ---\n${fileContextSegment}\n--- End of content from uploaded file: ${uploadedFileName} ---`;
                 if (userMessage) {
                     fullMessageToSend = `User's question: "${userMessage}"\n\nPlease consider the following content from the uploaded file named "${uploadedFileName}" when formulating your response:\n${fileContext}`;
                     displayedUserMessage = `${userMessage} (with context from ${uploadedFileName})`;
@@ -466,15 +477,23 @@
                 }
             }
 
-            if (!fullMessageToSend) {
-                addMessageToChatBox("Please type a message or upload a file to send.", 'system-notification', false, true);
+            if (!fullMessageToSend && !userMessage) { // Check if there's any message to send
+                addMessageToChatBox("Please type a message or ensure a file is uploaded and an action implied (e.g., summarize).", 'system-notification', false, true);
                 return;
             }
 
-            addMessageToChatBox(displayedUserMessage, 'user');
+            addMessageToChatBox(displayedUserMessage || "Processing file...", 'user'); // Display something if only file
             userInputField.value = '';
             userInputField.style.height = 'auto';
             chatForm.style.alignItems = 'flex-end';
+
+            // Clear file after sending (optional, depends on desired UX)
+            // fileInput.value = '';
+            // fileNameDisplay.textContent = 'No file selected';
+            // uploadedFileContent = null;
+            // uploadedFileName = null;
+            // userInputField.placeholder = "Type your message...";
+
 
             const thinkingMessageDiv = addMessageToChatBox("Ai is thinking...", 'ai', true);
 
@@ -485,7 +504,7 @@
                     body: JSON.stringify({ message: fullMessageToSend }),
                 });
 
-                if (thinkingMessageDiv) chatBox.removeChild(thinkingMessageDiv);
+                if (thinkingMessageDiv && thinkingMessageDiv.parentNode === chatBox) chatBox.removeChild(thinkingMessageDiv);
 
                 if (!response.ok) {
                     const errorData = await response.json();
@@ -522,23 +541,16 @@
                 p.textContent = message;
                 messageDiv.appendChild(p);
             } else { // For AI messages, parse Markdown
-                // Split message by code blocks to handle them separately
-                const parts = message.split(/(```[\w-]*\n[\s\S]*?\n```|```[\s\S]*?\n```)/g);
-                let contentAdded = false;
+                const markdownContainer = document.createElement('div');
+                markdownContainer.innerHTML = marked.parse(message); // Use marked.parse()
 
-                parts.forEach(part => {
-                    if (part.startsWith('```') && part.endsWith('```')) {
-                        // This is a code block
-                        const pre = document.createElement('pre');
-                        const code = document.createElement('code');
-                        const langMatch = part.match(/^```(\w*)\n/);
-                        let codeContent = part.substring(part.indexOf('\n') + 1, part.lastIndexOf('\n```'));
+                // Add copy buttons to pre > code blocks generated by Marked.js
+                markdownContainer.querySelectorAll('pre').forEach(pre => {
+                    const codeElement = pre.querySelector('code');
+                    const codeContent = codeElement ? codeElement.textContent : pre.textContent; // Fallback if no code tag
 
-                        if (langMatch && langMatch[1]) {
-                            code.className = `language-${langMatch[1].toLowerCase()}`;
-                        }
-                        code.textContent = codeContent; // Use textContent for code to prevent XSS
-                        pre.appendChild(code);
+                    if (codeContent) {
+                        pre.style.position = 'relative'; // Ensure pre is positioned for button
 
                         const copyButton = document.createElement('button');
                         copyButton.innerHTML = '<i class="fas fa-copy"></i> Copy';
@@ -552,28 +564,14 @@
                                     copyButton.classList.remove('copied');
                                 }, 2000);
                             }).catch(err => {
-                                copyButton.textContent = 'Error'; // Keep it simple
+                                copyButton.textContent = 'Error';
                                 console.error('Failed to copy: ', err);
                             });
                         });
                         pre.appendChild(copyButton);
-                        messageDiv.appendChild(pre);
-                        contentAdded = true;
-                    } else if (part.trim() !== '') {
-                        // This is a non-code part, parse as Markdown
-                        const markdownContainer = document.createElement('div');
-                        markdownContainer.innerHTML = marked.parse(part.trim()); // Use marked.parse()
-                        messageDiv.appendChild(markdownContainer);
-                        contentAdded = true;
                     }
                 });
-
-                if (!contentAdded && message.trim() !== '') {
-                    // Fallback if splitting logic fails or message is simple text
-                    const p = document.createElement('p');
-                    p.textContent = message;
-                    messageDiv.appendChild(p);
-                }
+                messageDiv.appendChild(markdownContainer);
             }
 
             if (messageDiv.innerHTML.trim() !== "") {
