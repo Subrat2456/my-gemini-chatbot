@@ -3,146 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conversational Gemini AI Chatbot</title>
+    <title>A.I. Assistant Interface</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<link rel="icon" href="Icon.png" type="image/png">
+<link rel="icon" href="Icon.png" type="image/png">
     <style>
-        /* CSS - Appears ONCE */
         :root {
-            --primary-color: #007bff;
-            --primary-hover-color: #0056b3;
-            --ai-message-bg: #f0f2f5;
-            --text-color: #333;
-            --container-bg: #ffffff;
-            --body-bg: #eef2f7;
-            --border-color: #e0e0e0;
-            --header-gradient-start: #6e8efb;
-            --header-gradient-end: #a777e3;
-            --code-bg: #2d2d2d;
-            --code-text-color: #abb2bf;
-            --button-secondary-bg: #6c757d;
-            --button-secondary-hover-bg: #5a6268;
+            --theme-primary-red: #D90429; /* Strong Red */
+            --theme-primary-red-hover: #A8001F;
+            --theme-gold-accent: #FFC300;
+            --theme-gold-accent-hover: #E0A800;
+            --theme-ai-message-bg: rgba(45, 156, 219, 0.15); /* Light Holographic Blue BG */
+            --theme-ai-message-border: #2D9CDB; /* Holographic Blue Border */
+            --theme-ai-text-color: #E0F2FE; /* Light Blue/White text for AI */
+            --theme-user-message-bg: var(--theme-gold-accent);
+            --theme-user-text-color: #181400; /* Dark text on gold */
+            --theme-container-bg: #222629; /* Dark Charcoal/Metallic */
+            --theme-body-bg: #0D0D0D; /* Very Dark, Near Black */
+            --theme-text-color: #E0E0E0; /* General light text */
+            --theme-border-color: #4A4E51; /* Darker, subtle border */
+            --theme-header-gradient-start: var(--theme-primary-red);
+            --theme-header-gradient-end: #8C001A; /* Darker Red for Gradient */
+            --theme-code-bg: #121212; /* Very dark for code blocks */
+            --theme-code-text-color: #A6E22E; /* Lime green for code text (classic) */
+            --theme-button-secondary-bg: #4A4E51; /* Metallic Gray */
+            --theme-button-secondary-hover-bg: #686D70;
+
+            --font-primary: 'Exo 2', sans-serif;
+            --font-display: 'Orbitron', sans-serif;
         }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: var(--font-primary);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: var(--body-bg);
+            background-color: var(--theme-body-bg);
+            color: var(--theme-text-color);
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         .chat-container {
-            background-color: var(--container-bg);
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            background-color: var(--theme-container-bg);
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(217, 4, 41, 0.3), 0 0 15px rgba(255, 195, 0, 0.2);
             width: 100%;
-            max-width: 750px;
+            max-width: 800px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
             height: 100vh;
-            max-height: 900px; /* Adjusted for typical screen heights */
+            max-height: 950px;
+            border: 1px solid var(--theme-border-color);
         }
+
         .header-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 20px;
-            background: linear-gradient(135deg, var(--header-gradient-start), var(--header-gradient-end));
+            padding: 15px 20px; /* Adjusted padding */
+            background: linear-gradient(135deg, var(--theme-header-gradient-start), var(--theme-header-gradient-end));
             color: white;
             flex-shrink: 0;
+            border-bottom: 1px solid var(--theme-gold-accent);
         }
+
         .header-bar h1 {
             margin: 0;
-            font-size: 1.25em;
-            font-weight: 600;
+            font-family: var(--font-display);
+            font-size: 1.4em;
+            font-weight: 700;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            margin-right: auto; /* Push controls to the right */
         }
-        #reset-chat-button {
-            background-color: rgba(255, 255, 255, 0.2);
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Spacing between buttons */
+        }
+
+        .header-controls button { /* Common style for new icon buttons */
+            background-color: rgba(255, 255, 255, 0.1);
             color: white;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            padding: 8px 15px;
-            border-radius: 20px;
+            border: 1px solid rgba(255, 195, 0, 0.5);
+            padding: 8px 10px;
+            border-radius: 50%; /* Circular for icon buttons */
+            width: 38px; 
+            height: 38px;
             cursor: pointer;
-            font-size: 0.9em;
-            transition: background-color 0.2s, transform 0.1s;
+            font-size: 0.9em; /* Icon size */
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s, color 0.2s;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+        }
+
+        .header-controls button:hover {
+            background-color: rgba(255, 195, 0, 0.2);
+            box-shadow: 0 0 8px var(--theme-gold-accent);
+            color: var(--theme-gold-accent); 
+        }
+        .header-controls button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: rgba(128,128,128,0.1);
+            color: rgba(255,255,255,0.3);
+            border-color: rgba(128,128,128,0.3);
+        }
+        .header-controls button:disabled:hover {
+            box-shadow: none;
+        }
+
+
+        .header-controls button:active:not(:disabled) {
+            transform: scale(0.96);
+        }
+
+        .header-controls button.active { 
+            background-color: var(--theme-gold-accent);
+            color: var(--theme-container-bg); 
+            border-color: var(--theme-gold-accent-hover);
+        }
+        .header-controls button.active:hover {
+             color: var(--theme-container-bg); /* Keep icon color on hover for active */
+        }
+
+
+        #reset-chat-button { /* Existing button in the new controls group */
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 195, 0, 0.7); 
+            padding: 8px 15px;
+            border-radius: 20px; /* Keep its unique shape if desired */
+            width: auto; /* Allow text */
+            height: 38px; /* Match height of other buttons */
+            font-family: var(--font-primary);
         }
         #reset-chat-button .button-text { display: inline; }
-        #reset-chat-button:hover { background-color: rgba(255, 255, 255, 0.35); }
+        #reset-chat-button:hover {
+            background-color: rgba(255, 195, 0, 0.2);
+            box-shadow: 0 0 10px var(--theme-gold-accent);
+        }
         #reset-chat-button:active { transform: scale(0.96); }
+
+        #listening-status {
+            text-align: center;
+            padding: 6px 10px;
+            background-color: #1A1D1F;
+            color: #ccc;
+            font-size: 0.8em;
+            display: none; /* Hidden by default */
+            border-bottom: 1px solid var(--theme-border-color);
+            flex-shrink: 0;
+        }
+
         #chat-box {
             flex-grow: 1;
             padding: 20px;
             overflow-y: auto;
-            border-bottom: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 18px; 
         }
+
         .message {
             padding: 12px 18px;
-            border-radius: 18px;
+            border-radius: 12px; 
             max-width: 85%;
-            line-height: 1.5;
+            line-height: 1.6;
             word-wrap: break-word;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+            border: 1px solid transparent;
         }
+
         .user-message {
-            background-color: var(--primary-color);
-            color: white;
+            background-color: var(--theme-user-message-bg);
+            color: var(--theme-user-text-color);
             align-self: flex-end;
-            border-bottom-right-radius: 6px;
+            border-bottom-right-radius: 4px; 
+            border-color: darken(var(--theme-user-message-bg), 10%);
         }
+
         .ai-message {
-            background-color: var(--ai-message-bg);
-            color: var(--text-color);
+            background-color: var(--theme-ai-message-bg);
+            color: var(--theme-ai-text-color);
             align-self: flex-start;
-            border-bottom-left-radius: 6px;
+            border: 1px solid var(--theme-ai-message-border);
+            border-bottom-left-radius: 4px; 
+            box-shadow: 0 0 10px rgba(45, 156, 219, 0.3);
         }
+
         .message p:first-child { margin-top: 0; }
         .message p:last-child { margin-bottom: 0; }
         .message p:not(:last-child) { margin-bottom: 10px; }
-        .ai-message .markdown-content strong { font-weight: 600; }
+
+        .ai-message .markdown-content strong { font-weight: 600; color: var(--theme-gold-accent); }
         .ai-message .markdown-content em { font-style: italic; }
         .ai-message .markdown-content ul, .ai-message .markdown-content ol {
             padding-left: 25px; margin-top: 8px; margin-bottom: 10px;
         }
         .ai-message .markdown-content li { margin-bottom: 5px; }
-        .ai-message .markdown-content a { color: var(--primary-hover-color); text-decoration: underline; }
-        .ai-message .markdown-content a:hover { color: #003d80; }
+        .ai-message .markdown-content a { color: var(--theme-gold-accent); text-decoration: underline; }
+        .ai-message .markdown-content a:hover { color: var(--theme-gold-accent-hover); }
         .ai-message .markdown-content h1, .ai-message .markdown-content h2, .ai-message .markdown-content h3, .ai-message .markdown-content h4 {
             margin-top: 18px; margin-bottom: 12px; line-height: 1.3;
+            font-family: var(--font-display);
+            color: var(--theme-primary-red);
         }
         .ai-message .markdown-content h1 { font-size: 1.5em; }
         .ai-message .markdown-content h2 { font-size: 1.3em; }
         .ai-message .markdown-content h3 { font-size: 1.15em; }
         .ai-message .markdown-content blockquote {
-            border-left: 4px solid #ccc; padding-left: 12px; margin-left: 0; font-style: italic; color: #555;
+            border-left: 4px solid var(--theme-gold-accent); padding-left: 12px; margin-left: 0; font-style: italic; color: #BDC3C7;
         }
-        .ai-message .markdown-content hr { border: 0; border-top: 1px solid #eee; margin: 18px 0; }
+        .ai-message .markdown-content hr { border: 0; border-top: 1px solid var(--theme-border-color); margin: 18px 0; }
         .ai-message .markdown-content table {
-            width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9em; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9em; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            background-color: rgba(0,0,0,0.2);
         }
         .ai-message .markdown-content th, .ai-message .markdown-content td {
-            border: 1px solid #ddd; padding: 10px 12px; text-align: left;
+            border: 1px solid var(--theme-border-color); padding: 10px 12px; text-align: left;
         }
-        .ai-message .markdown-content th { background-color: #f2f2f2; font-weight: 600; }
-        .ai-message .markdown-content tr:nth-child(even) { background-color: #f9f9f9; }
+        .ai-message .markdown-content th { background-color: rgba(217, 4, 41, 0.3); font-weight: 600; color: var(--theme-primary-red); }
+        .ai-message .markdown-content tr:nth-child(even) { background-color: rgba(255,255,255,0.03); }
+        
         .ai-message .generated-image {
-            max-width: 100%; height: auto; border-radius: 8px; margin-top: 10px; display: block; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 100%; height: auto; border-radius: 8px; margin-top: 10px; display: block;
+            border: 2px solid var(--theme-ai-message-border);
+            box-shadow: 0 0 10px var(--theme-ai-message-border);
         }
+
         .ai-message .markdown-content pre {
-            background-color: var(--code-bg);
-            color: var(--code-text-color);
+            background-color: var(--theme-code-bg);
+            color: var(--theme-code-text-color); 
             padding: 16px;
             border-radius: 8px;
             overflow-x: auto;
@@ -150,65 +252,82 @@
             font-size: 0.9em;
             margin: 12px 0;
             position: relative;
+            border: 1px solid #333;
         }
         .ai-message .markdown-content pre code.hljs {
-            padding: 0; background: none; color: inherit; display: block;
+            padding: 0; background: none; 
+            color: inherit; 
+            display: block;
         }
+
         .copy-code-button {
             position: absolute;
             top: 10px; right: 10px;
-            background-color: #4f5b66;
-            color: #fff;
-            border: none; padding: 6px 10px; border-radius: 5px;
+            background-color: #383838; 
+            color: var(--theme-gold-accent);
+            border: 1px solid var(--theme-gold-accent);
+            padding: 6px 10px; border-radius: 5px;
             cursor: pointer; font-size: 0.85em;
-            opacity: 0;
-            transition: opacity 0.2s, background-color 0.2s;
+            opacity: 0.6; 
+            transition: opacity 0.2s, background-color 0.2s, color 0.2s;
             display: inline-flex; align-items: center; gap: 5px;
             z-index: 1;
         }
-        .ai-message .markdown-content pre:hover .copy-code-button { opacity: 0.8; }
-        .copy-code-button:hover { opacity: 1; background-color: var(--primary-color); }
-        .copy-code-button.copied { background-color: #28a745; opacity: 1; }
+        .ai-message .markdown-content pre:hover .copy-code-button { opacity: 1; }
+        .copy-code-button:hover {
+            opacity: 1;
+            background-color: var(--theme-gold-accent);
+            color: var(--theme-code-bg);
+        }
+        .copy-code-button.copied {
+            background-color: #28a745; color: white; border-color: #28a745;
+        }
 
         #file-upload-area {
             display: flex; align-items: center;
-            padding: 12px 18px;
-            background-color: #f9fafb;
-            border-bottom: 1px solid var(--border-color);
+            padding: 10px 10px; 
+            background-color: #1A1D1F; 
+            border-bottom: 1px solid var(--theme-border-color);
+            border-top: 1px solid var(--theme-border-color); /* Added top border */
             flex-shrink: 0;
-            gap: 10px; /* Added gap between buttons */
+            gap: 12px;
         }
         #file-input { display: none; }
-        .file-upload-button, #open-camera-button, #open-screen-share-button { /* Shared style for buttons */
-            background-color: var(--button-secondary-bg);
-            color: white;
-            padding: 8px 15px; border-radius: 20px;
+        .file-upload-button { 
+            background-color: var(--theme-button-secondary-bg);
+            color: var(--theme-text-color);
+            padding: 8px 10px; border-radius: 5px; 
             cursor: pointer; font-size: 0.9em;
             display: inline-flex; align-items: center; gap: 8px;
-            transition: background-color 0.2s;
-            border: none; /* Ensure buttons don't have default borders */
+            transition: background-color 0.2s, box-shadow 0.2s, color 0.2s;
+            border: 1px solid var(--theme-border-color);
+            font-family: var(--font-primary);
         }
-        .file-upload-button:hover, #open-camera-button:hover, #open-screen-share-button:hover {
-            background-color: var(--button-secondary-hover-bg);
+        .file-upload-button:hover {
+            background-color: var(--theme-button-secondary-hover-bg);
+            color: var(--theme-gold-accent);
+            box-shadow: 0 0 8px var(--theme-gold-accent);
         }
         #file-name-display {
-            margin-left: 2px; /* Adjusted margin */
-            font-size: 0.85em; color: #555;
+            margin-left: 2px;
+            font-size: 0.85em; color: #999;
             overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
             flex-grow: 1;
         }
+
         #chat-form {
             display: flex;
-            padding: 15px;
-            background-color: var(--container-bg);
+            padding: 15px 20px;
+            background-color: var(--theme-container-bg); 
             align-items: flex-end;
             flex-shrink: 0;
+            /* border-top: 1px solid var(--theme-border-color); Removed, file-upload-area has bottom border now */
         }
         #user-input {
             flex-grow: 1;
             padding: 12px 18px;
-            border: 1px solid #ced4da;
-            border-radius: 24px;
+            border: 1px solid var(--theme-border-color);
+            border-radius: 24px; 
             margin-right: 10px;
             font-size: 1em;
             resize: none;
@@ -216,171 +335,130 @@
             line-height: 1.5;
             max-height: 150px;
             overflow-y: auto;
-            background-color: #fcfcfc;
+            background-color: #2C3034; 
+            color: var(--theme-text-color);
+            font-family: var(--font-primary);
+        }
+        #user-input::placeholder {
+            color: #777;
         }
         #user-input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+            border-color: var(--theme-primary-red);
+            box-shadow: 0 0 0 0.2rem rgba(217, 4, 41, 0.35); 
+            outline: none;
         }
         #send-button {
             padding: 10px;
-            background-color: var(--primary-color);
+            background-color: var(--theme-primary-red);
             color: white;
             border: none; border-radius: 50%;
-            cursor: pointer; font-size: 1.2em;
+            cursor: pointer; font-size: 1.3em; 
             width: 48px; height: 48px;
             display: flex; justify-content: center; align-items: center;
-            transition: background-color 0.2s, transform 0.1s;
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
             flex-shrink: 0;
         }
-        #send-button:hover { background-color: var(--primary-hover-color); }
+        #send-button:hover {
+            background-color: var(--theme-primary-red-hover);
+            box-shadow: 0 0 10px var(--theme-primary-red);
+        }
         #send-button:active { transform: scale(0.9); }
+
         .system-message {
-            font-style: italic; color: #666; text-align: center;
-            background-color: #f8f9fa; padding: 10px 15px; border-radius: 8px;
+            font-style: italic; color: #9E9E9E; text-align: center;
+            background-color: rgba(0,0,0,0.2); padding: 10px 15px; border-radius: 8px;
             margin: 10px auto; max-width: 90%; align-self: center; box-shadow: none;
+            border: 1px dashed #555;
         }
-        .error-message.ai-message {
-            background-color: #ffebee !important;
-            border: 1px solid #f44336;
+        .error-message.ai-message { 
+            background-color: rgba(217, 4, 41, 0.2) !important; 
+            border: 1px solid var(--theme-primary-red);
         }
-        .error-message p { color: #c62828; }
-        .thinking-message.ai-message { background-color: var(--ai-message-bg); }
-        .thinking-message p { font-style: italic; color: #777; }
-
-        /* Camera Modal Styles */
-        #camera-modal {
-            display: none; /* Hidden by default */
-            position: fixed;
-            z-index: 1000;
-            left: 0; top: 0;
-            width: 100%; height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.6);
-            justify-content: center;
-            align-items: center;
-        }
-        .camera-modal-content {
-            background-color: #fff;
-            margin: auto;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-        }
-        #camera-preview {
-            width: 100%;
-            max-height: 300px; /* Limit preview height */
-            border-radius: 8px;
-            margin-bottom: 15px;
-            background-color: #333; /* Placeholder bg for when stream not active */
-        }
-        .camera-controls button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1em;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 5px;
-            transition: background-color 0.2s;
-        }
-        .camera-controls button:hover {
-            background-color: var(--primary-hover-color);
-        }
-        .camera-controls button#close-camera-modal-button {
-            background-color: var(--button-secondary-bg);
-        }
-        .camera-controls button#close-camera-modal-button:hover {
-            background-color: var(--button-secondary-hover-bg);
-        }
-        #camera-status {
-            font-size: 0.9em;
-            color: #555;
-            margin-top: 10px;
+        .error-message p { color: #F48FB1; } 
+        
+        .system-message.error-message { 
+             background-color: rgba(217, 4, 41, 0.2) !important;
+             border: 1px solid var(--theme-primary-red);
+             color: #F48FB1;
         }
 
+        .thinking-message.ai-message {
+            background-color: var(--theme-ai-message-bg);
+            border-color: var(--theme-ai-message-border);
+        }
+        .thinking-message p { font-style: italic; color: var(--theme-ai-text-color); opacity: 0.7; }
 
-        #chat-box::-webkit-scrollbar { width: 8px; }
-        #chat-box::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        #chat-box::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
-        #chat-box::-webkit-scrollbar-thumb:hover { background: #aaa; }
-        #user-input::-webkit-scrollbar { width: 6px; }
-        #user-input::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        #user-input::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+
+        #chat-box::-webkit-scrollbar, #user-input::-webkit-scrollbar { width: 10px; }
+        #chat-box::-webkit-scrollbar-track, #user-input::-webkit-scrollbar-track { background: #2C3034; border-radius: 10px; }
+        #chat-box::-webkit-scrollbar-thumb, #user-input::-webkit-scrollbar-thumb { background: var(--theme-button-secondary-bg); border-radius: 10px; border: 2px solid #2C3034; }
+        #chat-box::-webkit-scrollbar-thumb:hover, #user-input::-webkit-scrollbar-thumb:hover { background: var(--theme-gold-accent); }
+
 
         @media (max-width: 768px) {
-            .chat-container { border-radius: 0; max-height: 100vh; }
-            .header-bar { padding: 10px 15px; }
-            .header-bar h1 { font-size: 1.15em; }
+            .chat-container { border-radius: 0; max-height: 100vh; max-width: 100%; }
+            .header-bar { padding: 12px 15px; }
+            .header-bar h1 { font-size: 1.25em; }
             #chat-box { padding: 15px; gap: 12px; }
             .message { max-width: 90%; padding: 10px 15px;}
-            #chat-form { padding: 10px; }
+            #chat-form { padding: 10px 15px; }
             #user-input { padding: 10px 15px; font-size: 0.95em; }
             #send-button { width: 44px; height: 44px; font-size: 1.1em;}
-            .camera-modal-content { width: 95%; padding: 15px; }
-            #camera-preview { max-height: 250px; }
+        }
+        @media (max-width: 600px) { /* Adjusted breakpoint for header controls */
+            .header-bar h1 { font-size: 1.1em; }
+            .header-controls { gap: 5px; }
+            .header-controls button { width: 36px; height: 36px; font-size: 0.85em; padding: 6px 8px;}
+            #reset-chat-button .button-text { display: none; }
+            #reset-chat-button { padding: 8px 10px; width: 36px; height: 36px; border-radius: 50%;}
         }
         @media (max-width: 480px) {
-            #reset-chat-button .button-text { display: none; }
-            #reset-chat-button { padding: 8px 10px; }
-            #file-upload-area { padding: 8px 12px; flex-wrap: wrap; /* Allow buttons to wrap */ }
-            .file-upload-button, #open-camera-button, #open-screen-share-button { font-size: 0.8em; padding: 7px 10px; gap: 5px; margin-bottom: 5px; /* Spacing for wrap */ }
+            #file-upload-area { padding: 8px 12px; flex-wrap: wrap; }
+            .file-upload-button { font-size: 0.8em; padding: 7px 10px; gap: 5px; margin-bottom: 5px; }
             #file-name-display { font-size: 0.8em; width: 100%; margin-left: 0; text-align: center; margin-top: 5px; }
-            .camera-controls button { font-size: 0.9em; padding: 8px 15px; }
         }
     </style>
 </head>
 <body>
     <div class="chat-container">
         <div class="header-bar">
-            <h1>My AI</h1>
-            <button id="reset-chat-button" title="Start New Chat">
-                <i class="fas fa-sync-alt"></i>
-                <span class="button-text">New Chat</span>
-            </button>
+            <h1>A.I. Assistant</h1>
+            <div class="header-controls">
+                <button id="mic-button" title="Activate Voice Input">
+                    <i class="fas fa-microphone"></i>
+                </button>
+                <button id="wake-word-button" title="Toggle 'Hey Jarvis' Wake Word">
+                    <i class="fas fa-assistive-listening-systems"></i>
+                </button>
+                <button id="tts-button" title="Toggle AI Speech Output">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+                <button id="reset-chat-button" title="Start New Protocol">
+                    <i class="fas fa-sync-alt"></i>
+                    <span class="button-text">New Protocol</span>
+                </button>
+            </div>
         </div>
+        <div id="listening-status">Listening...</div>
         <div id="chat-box">
             <!-- Messages will appear here -->
         </div>
         <div id="file-upload-area">
             <label for="file-input" class="file-upload-button">
-                <i class="fas fa-paperclip"></i> Attach File
+                <i class="fas fa-paperclip"></i> Attach Intel
             </label>
             <input type="file" id="file-input" accept=".txt,.js,.py,.html,.css,.md,.json,text/plain,image/jpeg,image/png,image/webp">
-            <button id="open-camera-button" title="Use Camera">
-                <i class="fas fa-camera"></i> Use Camera
-            </button>
-            <button id="open-screen-share-button" title="Share Screen">
-                <i class="fas fa-desktop"></i> Share Screen
-            </button>
-            <span id="file-name-display">No file selected</span>
+            <span id="file-name-display">No intel loaded</span>
         </div>
         <form id="chat-form">
-            <textarea id="user-input" placeholder="Type your message..." rows="1"></textarea>
-            <button type="submit" id="send-button" title="Send Message">
+            <textarea id="user-input" placeholder="Enter command or query..." rows="1"></textarea>
+            <button type="submit" id="send-button" title="Execute Command">
                 <i class="fas fa-paper-plane"></i>
             </button>
         </form>
     </div>
 
-    <div id="camera-modal">
-        <div class="camera-modal-content">
-            <video id="camera-preview" autoplay playsinline muted></video>
-            <canvas id="camera-canvas" style="display:none;"></canvas>
-            <div id="camera-status"></div>
-            <div class="camera-controls">
-                <button id="capture-photo-button">Capture Photo</button>
-                <button id="close-camera-modal-button">Close</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // JavaScript - Appears ONCE
         marked.setOptions({
             sanitize: false,
             breaks: true,
@@ -403,24 +481,24 @@
         const fileNameDisplay = document.getElementById('file-name-display');
         const resetChatButton = document.getElementById('reset-chat-button');
 
-        // Camera elements
-        const openCameraButton = document.getElementById('open-camera-button');
-        const cameraModal = document.getElementById('camera-modal');
-        const cameraPreview = document.getElementById('camera-preview');
-        const cameraCanvas = document.getElementById('camera-canvas'); // Reused for screen capture
-        const capturePhotoButton = document.getElementById('capture-photo-button');
-        const closeCameraModalButton = document.getElementById('close-camera-modal-button');
-        const cameraStatus = document.getElementById('camera-status');
-        let currentCameraStream = null;
+        const micButton = document.getElementById('mic-button');
+        const wakeWordButton = document.getElementById('wake-word-button');
+        const ttsButton = document.getElementById('tts-button');
+        const listeningStatus = document.getElementById('listening-status');
 
-        // Screen Share elements
-        const openScreenShareButton = document.getElementById('open-screen-share-button');
-        let currentScreenStream = null;
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition;
+        let isListeningForWakeWord = false;
+        let isListeningForCommand = false;
+        let autoRestartWakeWord = false; 
+        let synth = window.speechSynthesis;
+        let autoSpeakAIResponses = true;
+        const WAKE_WORD = "hey jarvis";
+        let currentUtterance = null;
 
 
-        // <<< --- IMPORTANT: CHANGE THIS TO YOUR ACTUAL BACKEND URL --- >>>
-        const BACKEND_URL = 'https://my-gemini-chatbot.onrender.com'; // Example: 'http://localhost:3000' or your deployed URL
-        const CHAT_HISTORY_KEY = 'geminiChatHistory';
+        const BACKEND_URL = 'https://my-gemini-chatbot.onrender.com'; 
+        const CHAT_HISTORY_KEY = 'geminiChatHistory_IronManTheme_NoMedia_V2_Speech';
 
         let uploadedFileContent = null;
         let uploadedFileName = null;
@@ -429,20 +507,335 @@
         function isBackendConfigured() { return BACKEND_URL && BACKEND_URL.startsWith('http'); }
         function clearChatDisplay() { chatBox.innerHTML = ''; }
 
+        function updateListeningStatus(text, show = true) {
+            if (listeningStatus) {
+                listeningStatus.textContent = text;
+                listeningStatus.style.display = show ? 'block' : 'none';
+                // Adjust chatBox paddingTop if status is visible
+                chatBox.style.paddingTop = show ? '5px' : '20px';
+            }
+        }
+        
+        function initializeSpeechRecognition() {
+            if (!SpeechRecognition) {
+                console.warn("Speech Recognition API not supported in this browser.");
+                if(micButton) { micButton.disabled = true; micButton.title = "Voice input not supported"; }
+                if(wakeWordButton) { wakeWordButton.disabled = true; wakeWordButton.title = "Wake word not supported"; }
+                updateListeningStatus("Speech recognition not supported.", true);
+                setTimeout(() => updateListeningStatus("", false), 3000);
+                return false;
+            }
+
+            recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+
+            recognition.onstart = () => {
+                if (isListeningForCommand) {
+                    updateListeningStatus("Listening for your command...");
+                    if(micButton) micButton.classList.add('active');
+                } else if (isListeningForWakeWord) {
+                    updateListeningStatus("Listening for 'Hey Jarvis'...");
+                    if(wakeWordButton) wakeWordButton.classList.add('active');
+                }
+            };
+
+            recognition.onend = () => {
+                if (!isListeningForCommand && !isListeningForWakeWord) { // General stop
+                     updateListeningStatus("Stopped listening.", true);
+                     setTimeout(() => updateListeningStatus("", false), 1500);
+                }
+                if(micButton) micButton.classList.remove('active');
+                // Wake word button 'active' state is managed by its toggle function primarily
+
+                if (isListeningForCommand) isListeningForCommand = false;
+
+                if (autoRestartWakeWord && isListeningForWakeWord) {
+                    console.log("Restarting wake word listener due to onend.");
+                    try {
+                        recognition.start();
+                    } catch (e) {
+                        console.error("Error restarting recognition onend:", e);
+                        toggleWakeWordListening(false); // Turn off if restart fails
+                    }
+                } else if (isListeningForWakeWord && !autoRestartWakeWord) {
+                    // Manually stopped or wake word found
+                    isListeningForWakeWord = false; 
+                    if(wakeWordButton) wakeWordButton.classList.remove('active');
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                let errorMsg = "Speech error: " + event.error;
+                if (event.error === 'no-speech') {
+                    errorMsg = "No speech detected. Try again.";
+                } else if (event.error === 'audio-capture') {
+                    errorMsg = "Microphone error. Check connection/permissions.";
+                } else if (event.error === 'not-allowed') {
+                    errorMsg = "Microphone permission denied. Enable in browser settings.";
+                    if(micButton) { micButton.disabled = true; micButton.title = "Mic permission denied"; }
+                    if(wakeWordButton) { wakeWordButton.disabled = true; wakeWordButton.title = "Mic permission denied"; }
+                }
+                updateListeningStatus(errorMsg, true);
+                setTimeout(() => updateListeningStatus("", false), 3000);
+
+                isListeningForCommand = false;
+                if(micButton) micButton.classList.remove('active');
+                if (isListeningForWakeWord && (event.error === 'not-allowed' || event.error === 'aborted')) {
+                    toggleWakeWordListening(false); // Turn off wake word mode for critical errors
+                } else if (isListeningForWakeWord && autoRestartWakeWord) {
+                    // For other errors like 'network', onend should handle restart if autoRestartWakeWord is true
+                } else {
+                    isListeningForWakeWord = false; // Ensure it's off if not auto-restarting
+                    if(wakeWordButton) wakeWordButton.classList.remove('active');
+                }
+            };
+
+            recognition.onresult = (event) => {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    transcript += event.results[i][0].transcript;
+                }
+                transcript = transcript.trim().toLowerCase();
+                console.log("Recognized:", transcript);
+
+                if (isListeningForWakeWord) {
+                    if (transcript.includes(WAKE_WORD)) {
+                        console.log("Wake word detected!");
+                        updateListeningStatus("Jarvis activated! Speak command...", true);
+                        autoRestartWakeWord = false; 
+                        recognition.stop(); 
+                        isListeningForWakeWord = false; 
+                        if(wakeWordButton) wakeWordButton.classList.remove('active'); // Temp remove active, command listener will handle its own
+                        
+                        startListeningForCommand(true); 
+                    }
+                } else if (isListeningForCommand) {
+                    if (event.results[event.results.length -1].isFinal) {
+                        const finalTranscript = event.results[event.results.length -1][0].transcript.trim();
+                        console.log("Final command:", finalTranscript);
+                        userInputField.value = finalTranscript;
+                        userInputField.dispatchEvent(new Event('input', { bubbles: true })); 
+                        
+                        autoRestartWakeWord = false; 
+                        recognition.stop(); 
+                        isListeningForCommand = false;
+                        if(micButton) micButton.classList.remove('active');
+
+                        handleSendMessage(); 
+
+                        if (wakeWordButton && wakeWordButton.classList.contains('wake-word-active-persistent')) {
+                            console.log("Restarting wake word listening after command (from wake word mode).");
+                            setTimeout(() => {
+                                if (wakeWordButton.classList.contains('wake-word-active-persistent')) {
+                                   toggleWakeWordListening(true); 
+                                }
+                            }, 1000); // Delay to avoid AI speech being picked up
+                        }
+                    }
+                }
+            };
+            return true;
+        }
+
+        function startListeningForCommand(triggeredByWakeWord = false) {
+            if (!recognition) {
+                if (!initializeSpeechRecognition()) return;
+            }
+             if (isListeningForWakeWord && !triggeredByWakeWord) {
+                console.log("Manual command input, stopping wake word listener.");
+                autoRestartWakeWord = false;
+                recognition.stop(); 
+                isListeningForWakeWord = false;
+                if(wakeWordButton) wakeWordButton.classList.remove('active');
+                if(wakeWordButton) wakeWordButton.classList.remove('wake-word-active-persistent');
+            }
+            
+            stopTTS(); 
+
+            isListeningForCommand = true;
+            isListeningForWakeWord = false; 
+            autoRestartWakeWord = false; 
+
+            recognition.continuous = false;
+            recognition.interimResults = false; 
+
+            try {
+                recognition.start();
+            } catch (e) {
+                console.error("Error starting command recognition:", e);
+                isListeningForCommand = false;
+                if (e.name === 'InvalidStateError') { 
+                    updateListeningStatus("Already listening. Speak now.", true);
+                     setTimeout(() => updateListeningStatus("", false), 2000);
+                } else {
+                    updateListeningStatus("Could not start listening. Check mic permissions.", true);
+                    setTimeout(() => updateListeningStatus("", false), 3000);
+                }
+            }
+        }
+
+        function toggleWakeWordListening(forceStart) {
+            if (!recognition) {
+                if (!initializeSpeechRecognition()) return;
+            }
+            stopTTS();
+
+            const shouldBeListening = typeof forceStart === 'boolean' ? forceStart : !isListeningForWakeWord;
+
+            if (shouldBeListening) {
+                if (isListeningForCommand) {
+                    console.log("Stopping command listener to start wake word listener.");
+                    recognition.stop(); 
+                    isListeningForCommand = false;
+                    if(micButton) micButton.classList.remove('active');
+                }
+                
+                isListeningForWakeWord = true;
+                autoRestartWakeWord = true; 
+                if(wakeWordButton) {
+                    wakeWordButton.classList.add('active');
+                    wakeWordButton.classList.add('wake-word-active-persistent');
+                    wakeWordButton.title = "Stop 'Hey Jarvis' Wake Word";
+                }
+
+                recognition.continuous = true;
+                recognition.interimResults = true; 
+
+                try {
+                    recognition.start();
+                    console.log("Wake word listener started.");
+                } catch (e) {
+                    console.error("Error starting wake word recognition:", e);
+                    isListeningForWakeWord = false;
+                    autoRestartWakeWord = false;
+                    if(wakeWordButton) {
+                        wakeWordButton.classList.remove('active');
+                        wakeWordButton.classList.remove('wake-word-active-persistent');
+                        wakeWordButton.title = "Toggle 'Hey Jarvis' Wake Word";
+                    }
+                    updateListeningStatus("Could not start wake word listening. Check mic permissions.", true);
+                     setTimeout(() => updateListeningStatus("", false), 3000);
+                }
+            } else {
+                console.log("Stopping wake word listener manually.");
+                isListeningForWakeWord = false;
+                autoRestartWakeWord = false; 
+                if(wakeWordButton) {
+                    wakeWordButton.classList.remove('active');
+                    wakeWordButton.classList.remove('wake-word-active-persistent');
+                    wakeWordButton.title = "Toggle 'Hey Jarvis' Wake Word";
+                }
+                if (recognition) { 
+                   try { recognition.stop(); } catch(e) { console.warn("Error stopping recognition (already stopped?):", e); }
+                }
+                updateListeningStatus("Wake word detection OFF.", true);
+                setTimeout(() => updateListeningStatus("", false), 2000);
+            }
+        }
+
+        function speakText(textToSpeak) {
+            if (!autoSpeakAIResponses || !synth || !textToSpeak) {
+                return;
+            }
+            if (synth.speaking) {
+                console.log("TTS: Cancelling previous speech.");
+                synth.cancel(); 
+            }
+
+            const tempDiv = document.createElement('div');
+            try {
+                 tempDiv.innerHTML = marked.parse(String(textToSpeak));
+            } catch (e) {
+                console.error("Markdown parsing error for TTS:", e);
+                tempDiv.textContent = String(textToSpeak); // Fallback to raw text
+            }
+           
+            let cleanText = tempDiv.textContent || tempDiv.innerText || "";
+            cleanText = cleanText.replace(/\[Image:.*?\]/g, "Image displayed.")
+                                 .replace(/CopyCopied!Error/g, '')
+                                 .trim();
+
+            if (!cleanText) {
+                console.log("TTS: No speakable text content found.");
+                return;
+            }
+            
+            currentUtterance = new SpeechSynthesisUtterance(cleanText);
+            currentUtterance.onerror = (event) => {
+                console.error('SpeechSynthesisUtterance.onerror', event);
+                let errorMsg = "TTS Error: " + event.error;
+                if (event.error === 'synthesis-failed') errorMsg = "AI speech synthesis failed.";
+                else if (event.error === 'language-unavailable') errorMsg = "AI speech language for TTS unavailable.";
+                else if (event.error === 'voice-unavailable') errorMsg = "AI speech voice for TTS unavailable.";
+                addMessageToChatBox(errorMsg, 'system-notification', {isError: true, autoDismiss: 3000, contentType: 'text/plain'});
+                currentUtterance = null;
+            };
+            currentUtterance.onend = () => {
+                currentUtterance = null;
+                console.log("TTS: Finished speaking.");
+            };
+            
+            console.log("TTS: Speaking:", cleanText.substring(0, 70) + "...");
+            synth.speak(currentUtterance);
+        }
+
+        function toggleTTS() {
+            autoSpeakAIResponses = !autoSpeakAIResponses;
+            if (ttsButton) {
+                const icon = ttsButton.querySelector('i');
+                if (autoSpeakAIResponses) {
+                    icon.classList.remove('fa-volume-mute');
+                    icon.classList.add('fa-volume-up');
+                    ttsButton.classList.add('active');
+                    ttsButton.title = "Mute AI Speech Output";
+                    // speakText("A.I. speech enabled."); // Confirmation (can be a bit chatty)
+                } else {
+                    icon.classList.remove('fa-volume-up');
+                    icon.classList.add('fa-volume-mute');
+                    ttsButton.classList.remove('active');
+                    ttsButton.title = "Unmute AI Speech Output";
+                    stopTTS(); 
+                }
+            }
+        }
+
+        function stopTTS() {
+            if (synth && synth.speaking) {
+                synth.cancel();
+                console.log("TTS: Speech stopped by user/system.");
+            }
+            currentUtterance = null;
+        }
+
+
         function addInitialAiGreeting() {
-            const greeting = "Understood! I am ready to assist you. How can I help you today?";
+            const greeting = "Systems online. A.I. Assistant ready. How may I be of service?";
             addMessageToChatBox(greeting, 'ai', { contentType: 'text/markdown' });
             saveMessageToHistory('ai', greeting, 'text/markdown');
         }
 
         resetChatButton.addEventListener('click', async () => {
-            stopCameraAndCloseModal(); // Close camera if open
-            stopScreenShare(); // Stop screen share if active
+            stopTTS();
+            if (recognition) {
+                autoRestartWakeWord = false; 
+                try { recognition.abort(); } catch(e) { console.warn("Error aborting recognition:", e); }
+            }
+            isListeningForCommand = false;
+            isListeningForWakeWord = false;
+            if(micButton) micButton.classList.remove('active');
+            if(wakeWordButton) {
+                wakeWordButton.classList.remove('active');
+                wakeWordButton.classList.remove('wake-word-active-persistent');
+                 wakeWordButton.title = "Toggle 'Hey Jarvis' Wake Word";
+            }
+            updateListeningStatus("", false);
+
             if (!isBackendConfigured()) {
-                addMessageToChatBox('Backend URL not configured. Please set BACKEND_URL in the script.', 'system-notification', { isError: true, contentType: 'text/plain' });
+                addMessageToChatBox('Backend URL not configured. Critical system error.', 'system-notification', { isError: true, contentType: 'text/plain' });
                 return;
             }
-            addMessageToChatBox("Resetting chat...", 'system-notification', { autoDismiss: 2000, contentType: 'text/plain' });
+            addMessageToChatBox("Initializing new protocol sequence...", 'system-notification', { autoDismiss: 2000, contentType: 'text/plain' });
             try {
                 const response = await fetch(`${BACKEND_URL}/reset-chat`, { method: 'POST' });
                 if (!response.ok) {
@@ -454,18 +847,19 @@
                 clearChatDisplay();
                 localStorage.removeItem(CHAT_HISTORY_KEY);
                 addInitialAiGreeting();
-                userInputField.placeholder = "Type your message...";
-                fileNameDisplay.textContent = 'No file selected';
+                userInputField.placeholder = "Enter command or query...";
+                fileNameDisplay.textContent = 'No intel loaded';
                 uploadedFileContent = null; uploadedFileName = null; uploadedFileType = null;
-                fileInput.value = ''; // Reset file input
-                addMessageToChatBox("Chat reset. Ask me anything!", 'system-notification', { autoDismiss: 3000, contentType: 'text/plain' });
+                fileInput.value = '';
+                addMessageToChatBox("Protocol reset. Awaiting input.", 'system-notification', { autoDismiss: 3000, contentType: 'text/plain' });
             } catch (error) {
-                console.error('Error resetting chat:', error);
-                addMessageToChatBox(`Error resetting chat: ${error.message}`, 'ai', { isError: true, contentType: 'text/plain' });
+                console.error('Error resetting protocol:', error);
+                addMessageToChatBox(`Protocol reset failure: ${error.message}`, 'ai', { isError: true, contentType: 'text/plain' });
             }
         });
 
         userInputField.addEventListener('input', () => {
+            stopTTS(); // Stop AI speech if user starts typing
             userInputField.style.height = 'auto';
             userInputField.style.height = (userInputField.scrollHeight) + 'px';
             chatForm.style.alignItems = userInputField.scrollHeight > 48 ? 'flex-start' : 'flex-end';
@@ -491,32 +885,32 @@
                     uploadedFileContent = e.target.result;
                     uploadedFileName = file.name;
                     uploadedFileType = file.type || 'text/plain';
-                    fileNameDisplay.textContent = `File: ${file.name}`;
-                    userInputField.placeholder = `Ask about ${file.name} or type...`;
+                    fileNameDisplay.textContent = `Intel: ${file.name}`;
+                    userInputField.placeholder = `Analyze ${file.name} or command...`;
                 };
                 reader.onerror = () => {
-                    fileNameDisplay.textContent = "Error reading file.";
+                    fileNameDisplay.textContent = "Error loading intel.";
                     clearUploadedFile();
                 };
                 reader.readAsText(file);
             } else if (allowedImageTypes.includes(file.type)) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    uploadedFileContent = e.target.result.split(',')[1]; // Get base64 part
+                    uploadedFileContent = e.target.result.split(',')[1];
                     uploadedFileName = file.name;
                     uploadedFileType = file.type;
-                    fileNameDisplay.textContent = `Image: ${file.name}`;
-                    userInputField.placeholder = `Describe ${file.name} or ask...`;
+                    fileNameDisplay.textContent = `Visual: ${file.name}`;
+                    userInputField.placeholder = `Describe ${file.name} or command...`;
                 };
                 reader.onerror = () => {
-                    fileNameDisplay.textContent = "Error reading image.";
+                    fileNameDisplay.textContent = "Error loading visual data.";
                     clearUploadedFile();
                 };
                 reader.readAsDataURL(file);
             } else {
-                fileNameDisplay.textContent = "Unsupported file (Text or JPEG/PNG/WEBP).";
+                fileNameDisplay.textContent = "Unsupported intel format (Text or JPEG/PNG/WEBP).";
                 clearUploadedFile();
-                fileInput.value = ''; // Clear the file input
+                fileInput.value = '';
             }
         }
 
@@ -524,16 +918,19 @@
             uploadedFileContent = null;
             uploadedFileName = null;
             uploadedFileType = null;
-            fileNameDisplay.textContent = "No file selected";
-            userInputField.placeholder = "Type your message...";
+            fileNameDisplay.textContent = "No intel loaded";
+            userInputField.placeholder = "Enter command or query...";
             if (fileInput.value) fileInput.value = '';
         }
 
-
-        chatForm.addEventListener('submit', handleSendMessage);
+        chatForm.addEventListener('submit', (event) => {
+            stopTTS(); // Stop AI speech on submit
+            handleSendMessage(event);
+        });
         userInputField.addEventListener('keypress', (event) => {
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
+                stopTTS(); // Stop AI speech on submit
                 handleSendMessage(event);
             }
         });
@@ -541,7 +938,7 @@
         async function handleSendMessage(event) {
             if (event) event.preventDefault();
             if (!isBackendConfigured()) {
-                addMessageToChatBox('Backend URL not configured.', 'system-notification', { isError: true, contentType: 'text/plain' });
+                addMessageToChatBox('Backend systems offline. Cannot process command.', 'system-notification', { isError: true, contentType: 'text/plain' });
                 return;
             }
 
@@ -552,15 +949,15 @@
             if (uploadedFileContent && uploadedFileType) {
                 requestBody.file = { content: uploadedFileContent, mimeType: uploadedFileType, name: uploadedFileName };
                 if (uploadedFileType.startsWith('image/')) {
-                    displayedUserMessage = userMessageText ? `${userMessageText} (image: ${uploadedFileName})` : `Sent image: ${uploadedFileName}`;
+                    displayedUserMessage = userMessageText ? `${userMessageText} (visual: ${uploadedFileName})` : `Transmitted visual: ${uploadedFileName}`;
                 } else {
-                    displayedUserMessage = userMessageText ? `${userMessageText} (file: ${uploadedFileName})` : `Sent file: ${uploadedFileName}`;
+                    displayedUserMessage = userMessageText ? `${userMessageText} (intel: ${uploadedFileName})` : `Transmitted intel: ${uploadedFileName}`;
                 }
             }
             requestBody.message = userMessageText;
 
             if (!userMessageText && !uploadedFileContent) {
-                addMessageToChatBox("Please type a message or upload a file/image to send.", 'system-notification', { isError: true, autoDismiss: 3000, contentType: 'text/plain' });
+                addMessageToChatBox("Awaiting command or intel to process.", 'system-notification', { isError: true, autoDismiss: 3000, contentType: 'text/plain' });
                 return;
             }
 
@@ -571,7 +968,7 @@
             userInputField.style.height = 'auto';
             chatForm.style.alignItems = 'flex-end';
 
-            const thinkingMessageDiv = addMessageToChatBox("AI is thinking...", 'ai', { isThinking: true, contentType: 'text/plain' });
+            const thinkingMessageDiv = addMessageToChatBox("Analyzing... Stand by.", 'ai', { isThinking: true, contentType: 'text/plain' });
 
             try {
                 const response = await fetch(`${BACKEND_URL}/chat`, {
@@ -584,11 +981,11 @@
 
                 if (!response.ok) {
                     const errorText = await response.text();
-                    let errorDetail = `HTTP error! Status: ${response.status} - ${response.statusText}`;
+                    let errorDetail = `System Error! Status: ${response.status} - ${response.statusText}`;
                     try {
                         const errorData = JSON.parse(errorText);
                         errorDetail = errorData.error || errorData.message || errorDetail;
-                    } catch (e) { /* ignore if errorText is not JSON */ }
+                    } catch (e) { /* ignore */ }
                     throw new Error(errorDetail);
                 }
 
@@ -597,12 +994,12 @@
                 addMessageToChatBox(data.reply, 'ai', { contentType: aiContentType });
                 saveMessageToHistory('ai', data.reply, aiContentType);
 
-                if (uploadedFileContent) { // Clear file/image info after successful send
+                if (uploadedFileContent) {
                     clearUploadedFile();
                 }
 
             } catch (error) {
-                console.error('Error sending/receiving message:', error);
+                console.error('Error during transmission:', error);
                 if (thinkingMessageDiv?.parentNode === chatBox) chatBox.removeChild(thinkingMessageDiv);
                 addMessageToChatBox(`Error: ${error.message}`, 'ai', { isError: true, contentType: 'text/plain' });
                 saveMessageToHistory('system-error', `Error: ${error.message}`, 'text/plain');
@@ -611,17 +1008,21 @@
 
         function addMessageToChatBox(messageContent, sender, options = {}) {
             let { isThinking = false, isError = false, autoDismiss = 0, contentType = 'text/plain' } = options;
-
+        
             if (sender === 'ai' && !isThinking && !isError && !contentType.startsWith('image/')) {
                  contentType = options.contentType || 'text/markdown';
             }
-
+        
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', `${sender}-message`);
-            if (sender === 'system-notification') messageDiv.classList.add('system-message');
-            if (isError) messageDiv.classList.add('error-message');
-            if (isThinking) messageDiv.classList.add('thinking-message');
 
+            if (sender === 'system-notification') {
+                messageDiv.classList.add('system-message');
+                if (isError) { messageDiv.classList.add('error-message'); }
+            } else if (isError) { messageDiv.classList.add('error-message'); }
+
+            if (isThinking) messageDiv.classList.add('thinking-message');
+        
             if (sender === 'ai' && !isThinking && !isError) {
                 let finalContent = messageContent;
                 if (typeof messageContent === 'object' && messageContent !== null && messageContent.url && messageContent.type?.startsWith('image/')) {
@@ -630,41 +1031,38 @@
                 }
                 const isImageURL = typeof finalContent === 'string' && /\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i.test(finalContent);
                 const isImageDataURI = typeof finalContent === 'string' && finalContent.startsWith('data:image/');
-
+        
                 if (contentType.startsWith('image/') || isImageURL || isImageDataURI) {
                     const img = document.createElement('img');
                     img.src = finalContent;
-                    img.alt = "Generated Image";
+                    img.alt = "Generated Visual Data";
                     img.className = 'generated-image';
-                    img.onload = () => { chatBox.scrollTop = chatBox.scrollHeight; } // Scroll after image load
+                    img.onload = () => { chatBox.scrollTop = chatBox.scrollHeight; }
                     img.onerror = () => {
-                        console.error("Failed to load image:", finalContent);
+                        console.error("Failed to load visual data:", finalContent);
                         const p = document.createElement('p');
-                        p.textContent = "[Error loading image. Check console.]";
-                        messageDiv.innerHTML = '';
-                        messageDiv.appendChild(p);
+                        p.textContent = "[Error: Visual data corrupted or missing.]";
+                        messageDiv.innerHTML = ''; messageDiv.appendChild(p);
                     };
                     messageDiv.appendChild(img);
                 } else {
                     const markdownContainer = document.createElement('div');
                     markdownContainer.className = 'markdown-content';
-                    try {
-                        markdownContainer.innerHTML = marked.parse(String(finalContent));
-                    }
+                    try { markdownContainer.innerHTML = marked.parse(String(finalContent)); }
                     catch (e) {
-                        console.error("Error parsing markdown:", e, String(finalContent).substring(0,100));
+                        console.error("Markdown parsing error:", e, String(finalContent).substring(0,100));
                         markdownContainer.textContent = String(finalContent);
                     }
-
+        
                     markdownContainer.querySelectorAll('pre code:not(.hljs)').forEach(block => {
                         try { hljs.highlightElement(block); }
-                        catch (e) { console.warn("Error applying highlight.js to code block:", e); }
+                        catch (e) { console.warn("Highlight.js error on block:", e); }
                     });
                     markdownContainer.querySelectorAll('pre:not(:has(.copy-code-button))').forEach(pre => {
                         const codeElement = pre.querySelector('code');
                         const codeContent = codeElement ? codeElement.textContent : pre.textContent;
                         if (codeContent) {
-                            pre.style.position = 'relative'; // Ensure pre is positioned for absolute child
+                            pre.style.position = 'relative';
                             const copyButton = document.createElement('button');
                             copyButton.innerHTML = '<i class="fas fa-copy"></i> Copy';
                             copyButton.className = 'copy-code-button';
@@ -685,16 +1083,19 @@
                         }
                     });
                     messageDiv.appendChild(markdownContainer);
+                    if (sender === 'ai' && autoSpeakAIResponses) {
+                        speakText(String(finalContent));
+                    }
                 }
-            } else {
+            } else { // User messages, system notifications, thinking messages
                 const p = document.createElement('p');
                 p.textContent = String(messageContent);
                 messageDiv.appendChild(p);
             }
-
+        
             if (messageDiv.innerHTML.trim() !== "") chatBox.appendChild(messageDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
-
+        
             if (autoDismiss > 0) {
                 setTimeout(() => {
                     if (messageDiv.parentNode === chatBox) {
@@ -709,29 +1110,24 @@
 
         function saveMessageToHistory(sender, content, contentType = 'text/plain') {
             if (sender === 'system-notification') return;
-
             const history = getChatHistory();
             let storableContent = (typeof content === 'object' && content !== null && content.url) ? content.url : content;
-
             history.push({ sender, content: String(storableContent), contentType, timestamp: new Date().toISOString() });
             try {
                 localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
             }
             catch (e) {
-                console.error("Error saving chat history to localStorage:", e);
-                addMessageToChatBox("Could not save chat history. Storage might be full.", 'system-notification', { isError: true, autoDismiss: 5000, contentType: 'text/plain' });
+                console.error("Error saving protocol history:", e);
+                addMessageToChatBox("Could not save protocol history. Storage may be compromised.", 'system-notification', { isError: true, autoDismiss: 5000, contentType: 'text/plain' });
             }
         }
 
         function getChatHistory() {
             const history = localStorage.getItem(CHAT_HISTORY_KEY);
-            try {
-                return history ? JSON.parse(history) : [];
-            }
+            try { return history ? JSON.parse(history) : []; }
             catch (e) {
-                console.error("Error parsing chat history from localStorage:", e);
-                localStorage.removeItem(CHAT_HISTORY_KEY);
-                return [];
+                console.error("Error parsing protocol history:", e);
+                localStorage.removeItem(CHAT_HISTORY_KEY); return [];
             }
         }
 
@@ -740,168 +1136,49 @@
             const history = getChatHistory();
             if (history.length > 0) {
                 history.forEach(msg => addMessageToChatBox(msg.content, msg.sender, { contentType: msg.contentType || (msg.sender === 'ai' ? 'text/markdown' : 'text/plain') }));
-                addMessageToChatBox("Chat history restored.", 'system-notification', { autoDismiss: 2000, contentType: 'text/plain' });
+                addMessageToChatBox("Protocol history restored.", 'system-notification', { autoDismiss: 2000, contentType: 'text/plain' });
             } else {
                 if (!isBackendConfigured()) {
-                    addMessageToChatBox("Welcome! Please configure the BACKEND_URL in the script, then click 'New Chat' to initialize.", 'system-notification', {contentType: 'text/plain'});
+                    addMessageToChatBox("Welcome. Backend systems appear offline. Configure BACKEND_URL, then initialize 'New Protocol'.", 'system-notification', {contentType: 'text/plain'});
                 } else {
-                     addMessageToChatBox("Welcome! Send a message to start chatting, or click 'New Chat' to begin.", 'system-notification', { autoDismiss: 3000, contentType: 'text/plain'});
+                     addMessageToChatBox("Welcome. Enter command or initialize 'New Protocol'.", 'system-notification', { autoDismiss: 3000, contentType: 'text/plain'});
                 }
             }
         }
-
-        // Camera Functionality
-        openCameraButton.addEventListener('click', startCamera);
-        capturePhotoButton.addEventListener('click', capturePhotoFromCamera);
-        closeCameraModalButton.addEventListener('click', stopCameraAndCloseModal);
-        cameraModal.addEventListener('click', (event) => {
-            if (event.target === cameraModal) {
-                stopCameraAndCloseModal();
-            }
-        });
-
-
-        async function startCamera() {
-            cameraStatus.textContent = "Requesting camera access...";
-            cameraModal.style.display = 'flex';
-            try {
-                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                    currentCameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-                    cameraPreview.srcObject = currentCameraStream;
-                    cameraPreview.onloadedmetadata = () => {
-                        cameraPreview.play();
-                        cameraStatus.textContent = "Camera active. Point and capture.";
-                    };
+        
+        // Event listeners for new speech control buttons
+        if (micButton) {
+            micButton.addEventListener('click', () => {
+                if (isListeningForCommand) {
+                    autoRestartWakeWord = false;
+                    if(recognition) recognition.stop();
+                    isListeningForCommand = false;
+                    micButton.classList.remove('active');
+                    updateListeningStatus("Voice input stopped.", true);
+                    setTimeout(() => updateListeningStatus("", false), 1500);
                 } else {
-                    throw new Error("getUserMedia not supported on your browser.");
+                    startListeningForCommand();
                 }
-            } catch (err) {
-                console.error("Error accessing camera:", err);
-                cameraStatus.textContent = `Error: ${err.name === 'NotAllowedError' ? 'Permission denied.' : err.message }`;
-            }
+            });
         }
 
-        function capturePhotoFromCamera() {
-            if (!currentCameraStream || !cameraPreview.srcObject) {
-                cameraStatus.textContent = "Camera not active.";
-                return;
-            }
-            cameraStatus.textContent = "Capturing...";
-            const context = cameraCanvas.getContext('2d');
-            cameraCanvas.width = cameraPreview.videoWidth;
-            cameraCanvas.height = cameraPreview.videoHeight;
-            context.drawImage(cameraPreview, 0, 0, cameraCanvas.width, cameraCanvas.height);
-
-            const imageDataURL = cameraCanvas.toDataURL('image/png');
-            uploadedFileContent = imageDataURL.split(',')[1];
-            uploadedFileName = `camera_capture_${Date.now()}.png`;
-            uploadedFileType = 'image/png';
-
-            fileNameDisplay.textContent = `Image: ${uploadedFileName}`;
-            userInputField.placeholder = `Describe ${uploadedFileName} or ask...`;
-            
-            if (fileInput.value) fileInput.value = ''; // Clear regular file input
-
-            cameraStatus.textContent = "Image captured!";
-            setTimeout(stopCameraAndCloseModal, 500);
+        if (wakeWordButton) {
+            wakeWordButton.addEventListener('click', () => {
+                toggleWakeWordListening();
+            });
         }
 
-        function stopCameraAndCloseModal() {
-            if (currentCameraStream) {
-                currentCameraStream.getTracks().forEach(track => track.stop());
-                currentCameraStream = null;
-                cameraPreview.srcObject = null;
-            }
-            cameraModal.style.display = 'none';
-            cameraStatus.textContent = "";
-        }
-
-        // Screen Share Functionality
-        openScreenShareButton.addEventListener('click', startScreenShare);
-
-        async function startScreenShare() {
-            if (!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia)) {
-                addMessageToChatBox("Screen sharing is not supported by your browser.", 'system-notification', { isError: true, autoDismiss: 4000, contentType: 'text/plain' });
-                return;
-            }
-
-            addMessageToChatBox("Requesting screen share permission...", 'system-notification', { autoDismiss: 3000, contentType: 'text/plain' });
-
-            try {
-                currentScreenStream = await navigator.mediaDevices.getDisplayMedia({
-                    video: { mediaSource: "screen" } // or "window", "browser"
-                });
-
-                const videoTrack = currentScreenStream.getVideoTracks()[0];
-                if (!videoTrack) {
-                    throw new Error("No video track found in screen share stream.");
-                }
-
-                // Create a temporary video element to play the stream and capture a frame
-                const tempVideo = document.createElement('video');
-                tempVideo.srcObject = currentScreenStream;
-                tempVideo.muted = true; // Important for autoplay
-
-                tempVideo.oncanplay = () => { // Ensure video is playable before capture
-                    tempVideo.play().then(() => {
-                        const context = cameraCanvas.getContext('2d');
-                        // Ensure canvas dimensions match video to avoid distortion/cropping
-                        const settings = videoTrack.getSettings();
-                        cameraCanvas.width = settings.width || tempVideo.videoWidth;
-                        cameraCanvas.height = settings.height || tempVideo.videoHeight;
-                        
-                        context.drawImage(tempVideo, 0, 0, cameraCanvas.width, cameraCanvas.height);
-                        const imageDataURL = cameraCanvas.toDataURL('image/png');
-
-                        uploadedFileContent = imageDataURL.split(',')[1];
-                        uploadedFileName = `screen_capture_${Date.now()}.png`;
-                        uploadedFileType = 'image/png';
-
-                        fileNameDisplay.textContent = `Screen: ${uploadedFileName}`;
-                        userInputField.placeholder = `Ask about ${uploadedFileName} or type...`;
-                        if (fileInput.value) fileInput.value = ''; // Clear regular file input
-
-                        addMessageToChatBox("Screen captured. Ready to send.", 'system-notification', { autoDismiss: 3000, contentType: 'text/plain' });
-                        
-                        stopScreenShare(); // Stop stream immediately after capture
-                        tempVideo.remove(); // Clean up temporary video element
-                    }).catch(playError => {
-                        console.error("Error playing screen share video for capture:", playError);
-                        addMessageToChatBox("Error capturing screen. Could not play video.", 'system-notification', { isError: true, autoDismiss: 4000, contentType: 'text/plain' });
-                        stopScreenShare();
-                        tempVideo.remove();
-                    });
-                };
-                
-                videoTrack.onended = () => { // User might stop sharing via browser UI
-                    console.log("Screen sharing ended by user or browser.");
-                    addMessageToChatBox("Screen sharing stopped.", 'system-notification', { autoDismiss: 3000, contentType: 'text/plain' });
-                    if(currentScreenStream) stopScreenShare(); // Ensure cleanup
-                    tempVideo.remove();
-                };
-
-            } catch (err) {
-                console.error("Error starting screen share:", err);
-                if (err.name === "NotAllowedError") {
-                    addMessageToChatBox("Screen share permission denied or cancelled.", 'system-notification', { isError: true, autoDismiss: 4000, contentType: 'text/plain' });
-                } else {
-                    addMessageToChatBox(`Error starting screen share: ${err.message}`, 'system-notification', { isError: true, autoDismiss: 4000, contentType: 'text/plain' });
-                }
-                stopScreenShare(); // Clean up if error occurs
-            }
-        }
-
-        function stopScreenShare() {
-            if (currentScreenStream) {
-                currentScreenStream.getTracks().forEach(track => track.stop());
-                currentScreenStream = null;
-            }
+        if (ttsButton) {
+            ttsButton.addEventListener('click', toggleTTS);
         }
 
 
         document.addEventListener('DOMContentLoaded', () => {
+            const canvasEl = document.getElementById('camera-canvas');
+            if (canvasEl) canvasEl.remove(); // Still remove if it was missed previously
+
             loadChatHistory();
-            if (chatBox.children.length <= 1 && isBackendConfigured()) { // Check if only system messages are present initially
+            if (chatBox.children.length <= 1 && isBackendConfigured()) {
                 const hasActualMessages = Array.from(chatBox.children).some(child =>
                     child.classList.contains('user-message') ||
                     (child.classList.contains('ai-message') && !child.classList.contains('thinking-message') && !child.classList.contains('system-message'))
@@ -910,6 +1187,35 @@
                     addInitialAiGreeting();
                 }
             }
+
+            // Initialize speech recognition (checks support, sets up `recognition` object)
+            // It doesn't start listening automatically.
+            if (SpeechRecognition) {
+                initializeSpeechRecognition();
+            } else {
+                console.warn("Speech Recognition API not supported. STT features will be unavailable.");
+                if(micButton) { micButton.disabled = true; micButton.title = "Speech input not supported"; }
+                if(wakeWordButton) { wakeWordButton.disabled = true; wakeWordButton.title = "Wake word not supported"; }
+                updateListeningStatus("Speech features not available in this browser.", true);
+                setTimeout(() => updateListeningStatus("", false), 5000);
+            }
+
+            // Set initial state of TTS button
+            if (ttsButton) {
+                const icon = ttsButton.querySelector('i');
+                if (autoSpeakAIResponses) {
+                    icon.classList.remove('fa-volume-mute');
+                    icon.classList.add('fa-volume-up');
+                    ttsButton.classList.add('active');
+                    ttsButton.title = "Mute AI Speech Output";
+                } else {
+                    icon.classList.remove('fa-volume-up');
+                    icon.classList.add('fa-volume-mute');
+                    ttsButton.classList.remove('active');
+                    ttsButton.title = "Unmute AI Speech Output";
+                }
+            }
+             updateListeningStatus("", false); // Ensure status is hidden initially
         });
     </script>
 </body>
