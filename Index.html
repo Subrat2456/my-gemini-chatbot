@@ -3,168 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A.I. Assistant Interface</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <title> Subrat AI</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Marked.js for Markdown parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<link rel="icon" href="Icon.png" type="image/png">
+    <link rel="icon" href="Icon.png" type="image/png">
     <style>
         :root {
-            --theme-primary-red: #D90429; /* Strong Red */
-            --theme-primary-red-hover: #A8001F;
-            --theme-gold-accent: #FFC300;
-            --theme-gold-accent-hover: #E0A800;
-            --theme-ai-message-bg: rgba(45, 156, 219, 0.15); /* Light Holographic Blue BG */
-            --theme-ai-message-border: #2D9CDB; /* Holographic Blue Border */
-            --theme-ai-text-color: #E0F2FE; /* Light Blue/White text for AI */
-            --theme-user-message-bg: var(--theme-gold-accent);
-            --theme-user-text-color: #181400; /* Dark text on gold */
-            --theme-container-bg: #222629; /* Dark Charcoal/Metallic */
-            --theme-body-bg: #0D0D0D; /* Very Dark, Near Black */
-            --theme-text-color: #E0E0E0; /* General light text */
-            --theme-border-color: #4A4E51; /* Darker, subtle border */
-            --theme-header-gradient-start: var(--theme-primary-red);
-            --theme-header-gradient-end: #8C001A; /* Darker Red for Gradient */
-            --theme-code-bg: #121212; /* Very dark for code blocks */
-            --theme-code-text-color: #A6E22E; /* Lime green for code text (classic) */
-            --theme-button-secondary-bg: #4A4E51; /* Metallic Gray */
-            --theme-button-secondary-hover-bg: #686D70;
-
-            --font-primary: 'Exo 2', sans-serif;
-            --font-display: 'Orbitron', sans-serif;
+            --primary-bg: #0a0a0f; /* Darker, less blue */
+            --container-bg: #12121c; /* Darker, more neutral */
+            --header-bg: #1a1a2e; /* Darker, slight purple/blue tone */
+            --accent-color: #00e0ff; /* Brighter Cyan */
+            --accent-hover: #00b8d4;
+            --user-message-bg: #005f73; /* Deeper teal/blue */
+            --ai-message-bg: #242b3a; /* Muted blue-gray, distinct from user */
+            --text-color: #e8e8f0; /* Very light gray, slightly off-white */
+            --text-secondary-color: #a0a0b0;
+            --code-bg: #0f0f14; /* Darker code background */
+            --border-color: #303040; /* More subtle border */
+            --error-bg: #6d1f1f; /* Darker error red */
+            --error-text: #ffbaba;
+            --success-color: #28a745;
+            --font-main: 'Roboto', sans-serif;
+            --font-title: 'Orbitron', sans-serif;
+            --message-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            --avatar-bg: #3a3f51;
         }
 
+        /* Basic Reset & Scrollbar Styling */
+        * {
+            box-sizing: border-box;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-color) var(--container-bg);
+        }
+        *::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        *::-webkit-scrollbar-track {
+            background: var(--container-bg);
+        }
+        *::-webkit-scrollbar-thumb {
+            background-color: var(--accent-color);
+            border-radius: 10px;
+            border: 2px solid var(--container-bg);
+        }
+        *::-webkit-scrollbar-thumb:hover {
+            background-color: var(--accent-hover);
+        }
+
+
         body {
-            font-family: var(--font-primary);
+            font-family: var(--font-main);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: var(--theme-body-bg);
-            color: var(--theme-text-color);
+            background-color: var(--primary-bg);
+            color: var(--text-color);
             margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            padding: 10px; /* Consistent padding for desktop */
         }
 
         .chat-container {
-            background-color: var(--theme-container-bg);
-            border-radius: 10px;
-            box-shadow: 0 0 30px rgba(217, 4, 41, 0.3), 0 0 15px rgba(255, 195, 0, 0.2);
+            background-color: var(--container-bg);
+            border-radius: 15px; /* Softer radius */
+            box-shadow: 0 0 40px rgba(0, 224, 255, 0.15), 0 0 20px rgba(0, 224, 255, 0.1);
             width: 100%;
-            max-width: 800px;
+            max-width: 800px; /* Wider */
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            height: 100vh;
-            max-height: 950px;
-            border: 1px solid var(--theme-border-color);
+            height: calc(100vh - 20px); /* 2 * body padding */
+            max-height: 900px; /* Cap height for desktop */
+            border: 1px solid var(--border-color);
         }
 
         .header-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px; /* Adjusted padding */
-            background: linear-gradient(135deg, var(--theme-header-gradient-start), var(--theme-header-gradient-end));
-            color: white;
-            flex-shrink: 0;
-            border-bottom: 1px solid var(--theme-gold-accent);
+            padding: 18px 25px;
+            background: var(--header-bg);
+            color: var(--text-color);
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0; /* Prevent header from shrinking */
         }
 
         .header-bar h1 {
             margin: 0;
-            font-family: var(--font-display);
-            font-size: 1.4em;
+            font-family: var(--font-title);
+            font-size: 1.8em;
+            color: var(--accent-color);
+            text-shadow: 0 0 8px var(--accent-color);
             font-weight: 700;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-            margin-right: auto; /* Push controls to the right */
-        }
-        
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px; /* Spacing between buttons */
+            letter-spacing: 1px;
         }
 
-        .header-controls button { /* Common style for new icon buttons */
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 195, 0, 0.5);
-            padding: 8px 10px;
-            border-radius: 50%; /* Circular for icon buttons */
-            width: 38px; 
-            height: 38px;
+        #reset-chat-button {
+            background-color: transparent;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 10px 18px;
+            border-radius: 25px;
             cursor: pointer;
-            font-size: 0.9em; /* Icon size */
-            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s, color 0.2s;
+            font-size: 0.95em;
+            font-weight: 500;
+            transition: background-color 0.2s, color 0.2s, transform 0.1s, box-shadow 0.2s;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
+            gap: 8px;
+            white-space: nowrap; /* Prevent text wrapping */
         }
 
-        .header-controls button:hover {
-            background-color: rgba(255, 195, 0, 0.2);
-            box-shadow: 0 0 8px var(--theme-gold-accent);
-            color: var(--theme-gold-accent); 
-        }
-        .header-controls button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background-color: rgba(128,128,128,0.1);
-            color: rgba(255,255,255,0.3);
-            border-color: rgba(128,128,128,0.3);
-        }
-        .header-controls button:disabled:hover {
-            box-shadow: none;
-        }
-
-
-        .header-controls button:active:not(:disabled) {
-            transform: scale(0.96);
-        }
-
-        .header-controls button.active { 
-            background-color: var(--theme-gold-accent);
-            color: var(--theme-container-bg); 
-            border-color: var(--theme-gold-accent-hover);
-        }
-        .header-controls button.active:hover {
-             color: var(--theme-container-bg); /* Keep icon color on hover for active */
-        }
-
-
-        #reset-chat-button { /* Existing button in the new controls group */
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 195, 0, 0.7); 
-            padding: 8px 15px;
-            border-radius: 20px; /* Keep its unique shape if desired */
-            width: auto; /* Allow text */
-            height: 38px; /* Match height of other buttons */
-            font-family: var(--font-primary);
-        }
-        #reset-chat-button .button-text { display: inline; }
         #reset-chat-button:hover {
-            background-color: rgba(255, 195, 0, 0.2);
-            box-shadow: 0 0 10px var(--theme-gold-accent);
+            background-color: var(--accent-color);
+            color: var(--header-bg);
+            box-shadow: 0 0 12px var(--accent-color);
         }
-        #reset-chat-button:active { transform: scale(0.96); }
+        #reset-chat-button:active {
+            transform: scale(0.95);
+        }
 
-        #listening-status {
-            text-align: center;
-            padding: 6px 10px;
-            background-color: #1A1D1F;
-            color: #ccc;
-            font-size: 0.8em;
-            display: none; /* Hidden by default */
-            border-bottom: 1px solid var(--theme-border-color);
-            flex-shrink: 0;
-        }
 
         #chat-box {
             flex-grow: 1;
@@ -172,287 +135,435 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 18px; 
+            gap: 18px;
+            min-height: 100px; /* Minimum height to show something even if empty */
         }
 
         .message {
-            padding: 12px 18px;
-            border-radius: 12px; 
+            display: flex;
+            align-items: flex-start;
             max-width: 85%;
-            line-height: 1.6;
             word-wrap: break-word;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-            border: 1px solid transparent;
+            animation: fadeIn 0.4s ease-out;
+            position: relative;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--avatar-bg);
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em; /* Icon size */
+            flex-shrink: 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        
+        .message-content-wrapper {
+            padding: 12px 18px;
+            border-radius: 20px;
+            line-height: 1.6;
+            box-shadow: var(--message-shadow);
+            flex-grow: 1; /* Allow content to take available space */
+            min-width: 0; /* Fix for flex items overflowing */
         }
 
         .user-message {
-            background-color: var(--theme-user-message-bg);
-            color: var(--theme-user-text-color);
             align-self: flex-end;
-            border-bottom-right-radius: 4px; 
-            border-color: darken(var(--theme-user-message-bg), 10%);
+            flex-direction: row-reverse;
+        }
+        .user-message .message-avatar { margin-left: 12px; }
+        .user-message .message-content-wrapper {
+            background-color: var(--user-message-bg);
+            color: var(--text-color);
+            border-bottom-right-radius: 6px;
         }
 
         .ai-message {
-            background-color: var(--theme-ai-message-bg);
-            color: var(--theme-ai-text-color);
             align-self: flex-start;
-            border: 1px solid var(--theme-ai-message-border);
-            border-bottom-left-radius: 4px; 
-            box-shadow: 0 0 10px rgba(45, 156, 219, 0.3);
         }
-
-        .message p:first-child { margin-top: 0; }
-        .message p:last-child { margin-bottom: 0; }
-        .message p:not(:last-child) { margin-bottom: 10px; }
-
-        .ai-message .markdown-content strong { font-weight: 600; color: var(--theme-gold-accent); }
-        .ai-message .markdown-content em { font-style: italic; }
-        .ai-message .markdown-content ul, .ai-message .markdown-content ol {
-            padding-left: 25px; margin-top: 8px; margin-bottom: 10px;
+        .ai-message .message-avatar { margin-right: 12px; }
+        .ai-message .message-content-wrapper {
+            background-color: var(--ai-message-bg);
+            color: var(--text-color);
+            border-bottom-left-radius: 6px;
         }
-        .ai-message .markdown-content li { margin-bottom: 5px; }
-        .ai-message .markdown-content a { color: var(--theme-gold-accent); text-decoration: underline; }
-        .ai-message .markdown-content a:hover { color: var(--theme-gold-accent-hover); }
-        .ai-message .markdown-content h1, .ai-message .markdown-content h2, .ai-message .markdown-content h3, .ai-message .markdown-content h4 {
-            margin-top: 18px; margin-bottom: 12px; line-height: 1.3;
-            font-family: var(--font-display);
-            color: var(--theme-primary-red);
-        }
-        .ai-message .markdown-content h1 { font-size: 1.5em; }
-        .ai-message .markdown-content h2 { font-size: 1.3em; }
-        .ai-message .markdown-content h3 { font-size: 1.15em; }
-        .ai-message .markdown-content blockquote {
-            border-left: 4px solid var(--theme-gold-accent); padding-left: 12px; margin-left: 0; font-style: italic; color: #BDC3C7;
-        }
-        .ai-message .markdown-content hr { border: 0; border-top: 1px solid var(--theme-border-color); margin: 18px 0; }
-        .ai-message .markdown-content table {
-            width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9em; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-            background-color: rgba(0,0,0,0.2);
-        }
-        .ai-message .markdown-content th, .ai-message .markdown-content td {
-            border: 1px solid var(--theme-border-color); padding: 10px 12px; text-align: left;
-        }
-        .ai-message .markdown-content th { background-color: rgba(217, 4, 41, 0.3); font-weight: 600; color: var(--theme-primary-red); }
-        .ai-message .markdown-content tr:nth-child(even) { background-color: rgba(255,255,255,0.03); }
         
-        .ai-message .generated-image {
-            max-width: 100%; height: auto; border-radius: 8px; margin-top: 10px; display: block;
-            border: 2px solid var(--theme-ai-message-border);
-            box-shadow: 0 0 10px var(--theme-ai-message-border);
+        .message-text { /* Container for actual text/markdown */
+            word-break: break-word; /* Ensure long words break nicely */
+        }
+        .message-text p:first-child { margin-top: 0; }
+        .message-text p:last-child { margin-bottom: 0; }
+        .message-text p:not(:last-child) { margin-bottom: 10px; }
+
+        .message-meta {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.75em;
+            color: var(--text-secondary-color);
+            margin-top: 8px;
+            opacity: 0.7;
+        }
+        .user-message .message-meta { justify-content: flex-start; }
+
+        .copy-msg-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary-color);
+            cursor: pointer;
+            padding: 2px;
+            font-size: 1.1em; 
+        }
+        .copy-msg-btn:hover { color: var(--accent-color); }
+        .copy-msg-btn .fas.fa-check { color: var(--success-color); }
+
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .ai-message .markdown-content pre {
-            background-color: var(--theme-code-bg);
-            color: var(--theme-code-text-color); 
-            padding: 16px;
+
+        /* Markdown Generated Content Styling */
+        .ai-message .message-text strong { font-weight: 700; color: var(--accent-color); }
+        .ai-message .message-text em { font-style: italic; }
+        .ai-message .message-text ul, .ai-message .message-text ol {
+            padding-left: 25px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+        }
+        .ai-message .message-text li { margin-bottom: 5px; }
+        .ai-message .message-text a {
+            color: var(--accent-color);
+            text-decoration: underline;
+            text-decoration-color: var(--accent-color);
+            text-decoration-style: dashed;
+            font-weight: 500;
+        }
+        .ai-message .message-text a:hover { color: var(--accent-hover); text-decoration-style: solid; }
+        .ai-message .message-text h1, .ai-message .message-text h2, .ai-message .message-text h3, .ai-message .message-text h4 {
+            margin-top: 18px;
+            margin-bottom: 12px;
+            line-height: 1.3;
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+        .ai-message .message-text h1 { font-size: 1.3em; }
+        .ai-message .message-text h2 { font-size: 1.2em; }
+        .ai-message .message-text h3 { font-size: 1.1em; }
+        .ai-message .message-text blockquote {
+            border-left: 4px solid var(--accent-color);
+            padding: 10px 15px; /* Adjusted padding */
+            margin: 10px 0;
+            font-style: italic;
+            color: var(--text-secondary-color);
+            background-color: rgba(0,0,0,0.1);
+        }
+        .ai-message .message-text hr {
+            border: 0;
+            border-top: 1px solid var(--border-color);
+            margin: 20px 0;
+        }
+
+
+        /* Code Block Styling */
+        .message-text pre {
+            background-color: var(--code-bg);
+            color: #f0f0f0;
+            padding: 15px;
             border-radius: 8px;
             overflow-x: auto;
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             font-size: 0.9em;
             margin: 12px 0;
+            border: 1px solid var(--border-color);
             position: relative;
-            border: 1px solid #333;
         }
-        .ai-message .markdown-content pre code.hljs {
-            padding: 0; background: none; 
-            color: inherit; 
-            display: block;
-        }
+        .message-text pre code { font-family: inherit; background: none; padding: 0; }
 
         .copy-code-button {
             position: absolute;
-            top: 10px; right: 10px;
-            background-color: #383838; 
-            color: var(--theme-gold-accent);
-            border: 1px solid var(--theme-gold-accent);
-            padding: 6px 10px; border-radius: 5px;
-            cursor: pointer; font-size: 0.85em;
-            opacity: 0.6; 
+            top: 10px;
+            right: 10px;
+            background-color: var(--ai-message-bg);
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+            opacity: 0.7;
             transition: opacity 0.2s, background-color 0.2s, color 0.2s;
-            display: inline-flex; align-items: center; gap: 5px;
-            z-index: 1;
         }
-        .ai-message .markdown-content pre:hover .copy-code-button { opacity: 1; }
-        .copy-code-button:hover {
-            opacity: 1;
-            background-color: var(--theme-gold-accent);
-            color: var(--theme-code-bg);
-        }
+        .message-text pre:hover .copy-code-button { opacity: 1; }
+        .copy-code-button:hover { background-color: var(--accent-color); color: var(--code-bg); }
         .copy-code-button.copied {
-            background-color: #28a745; color: white; border-color: #28a745;
+            background-color: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
         }
 
+
+        /* File Upload Area */
         #file-upload-area {
-            display: flex; align-items: center;
-            padding: 10px 10px; 
-            background-color: #1A1D1F; 
-            border-bottom: 1px solid var(--theme-border-color);
-            border-top: 1px solid var(--theme-border-color); /* Added top border */
-            flex-shrink: 0;
-            gap: 12px;
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            background-color: var(--header-bg);
+            border-top: 1px solid var(--border-color);
+            flex-shrink: 0; /* Prevent from shrinking */
         }
         #file-input { display: none; }
-        .file-upload-button { 
-            background-color: var(--theme-button-secondary-bg);
-            color: var(--theme-text-color);
-            padding: 8px 10px; border-radius: 5px; 
-            cursor: pointer; font-size: 0.9em;
-            display: inline-flex; align-items: center; gap: 8px;
-            transition: background-color 0.2s, box-shadow 0.2s, color 0.2s;
-            border: 1px solid var(--theme-border-color);
-            font-family: var(--font-primary);
+        .file-upload-button {
+            background-color: var(--user-message-bg);
+            color: var(--text-color);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s;
+            flex-shrink: 0;
+            white-space: nowrap; /* Prevent text wrapping */
         }
-        .file-upload-button:hover {
-            background-color: var(--theme-button-secondary-hover-bg);
-            color: var(--theme-gold-accent);
-            box-shadow: 0 0 8px var(--theme-gold-accent);
+        .file-upload-button:hover { background-color: #007a99; }
+        
+        #file-info-container {
+            display: flex;
+            align-items: center;
+            margin-left: 12px;
+            font-size: 0.9em;
+            color: var(--text-secondary-color);
+            overflow: hidden; /* Crucial for ellipsis */
+            flex-grow: 1;
+            min-width: 0; /* Prevent overflow with flex */
         }
         #file-name-display {
-            margin-left: 2px;
-            font-size: 0.85em; color: #999;
-            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-            flex-grow: 1;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            flex-grow: 1; /* Allow it to take space */
         }
+        #remove-file-button {
+            background: none;
+            border: none;
+            color: var(--text-secondary-color);
+            font-size: 1.3em;
+            cursor: pointer;
+            padding: 0 5px;
+            margin-left: 8px;
+            flex-shrink: 0;
+        }
+        #remove-file-button:hover { color: var(--accent-color); }
 
+
+        /* Chat Input Form */
         #chat-form {
             display: flex;
             padding: 15px 20px;
-            background-color: var(--theme-container-bg); 
+            background-color: var(--header-bg);
             align-items: flex-end;
-            flex-shrink: 0;
-            /* border-top: 1px solid var(--theme-border-color); Removed, file-upload-area has bottom border now */
+            border-top: 1px solid var(--border-color);
+            flex-shrink: 0; /* Prevent from shrinking */
         }
+
         #user-input {
             flex-grow: 1;
-            padding: 12px 18px;
-            border: 1px solid var(--theme-border-color);
-            border-radius: 24px; 
-            margin-right: 10px;
+            padding: 14px 20px;
+            border: 1px solid var(--border-color);
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            border-radius: 25px;
+            margin-right: 12px;
             font-size: 1em;
+            font-family: var(--font-main);
             resize: none;
-            min-height: 24px;
-            line-height: 1.5;
+            min-height: 26px; /* Base height based on line-height + padding */
+            line-height: 1.6;
             max-height: 150px;
             overflow-y: auto;
-            background-color: #2C3034; 
-            color: var(--theme-text-color);
-            font-family: var(--font-primary);
-        }
-        #user-input::placeholder {
-            color: #777;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
         #user-input:focus {
-            border-color: var(--theme-primary-red);
-            box-shadow: 0 0 0 0.2rem rgba(217, 4, 41, 0.35); 
             outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 8px var(--accent-color);
         }
+        #user-input::placeholder { color: var(--text-secondary-color); }
+
         #send-button {
-            padding: 10px;
-            background-color: var(--theme-primary-red);
-            color: white;
-            border: none; border-radius: 50%;
-            cursor: pointer; font-size: 1.3em; 
-            width: 48px; height: 48px;
-            display: flex; justify-content: center; align-items: center;
+            padding: 0;
+            background-color: var(--accent-color);
+            color: var(--header-bg);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.4em; /* Icon size */
+            width: 50px;  
+            height: 50px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
             transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
             flex-shrink: 0;
         }
         #send-button:hover {
-            background-color: var(--theme-primary-red-hover);
-            box-shadow: 0 0 10px var(--theme-primary-red);
+            background-color: var(--accent-hover);
+            box-shadow: 0 0 12px var(--accent-hover);
         }
         #send-button:active { transform: scale(0.9); }
 
-        .system-message {
-            font-style: italic; color: #9E9E9E; text-align: center;
-            background-color: rgba(0,0,0,0.2); padding: 10px 15px; border-radius: 8px;
-            margin: 10px auto; max-width: 90%; align-self: center; box-shadow: none;
-            border: 1px dashed #555;
+
+        /* System, Error & Thinking message styling */
+        .system-message .message-content-wrapper { 
+            font-style: italic;
+            color: var(--text-secondary-color);
+            background-color: rgba(36, 43, 58, 0.7); /* var(--ai-message-bg) with alpha */
+            padding: 10px 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px dashed var(--border-color);
         }
-        .error-message.ai-message { 
-            background-color: rgba(217, 4, 41, 0.2) !important; 
-            border: 1px solid var(--theme-primary-red);
-        }
-        .error-message p { color: #F48FB1; } 
+        .system-message .message-avatar { display: none; } /* Hide avatar for system messages */
         
-        .system-message.error-message { 
-             background-color: rgba(217, 4, 41, 0.2) !important;
-             border: 1px solid var(--theme-primary-red);
-             color: #F48FB1;
+        /* Specific styling for error messages (AI or System) applied via JS to .message-content-wrapper */
+        /* .error-message .message-content-wrapper is covered by JS inline style for error background/color */
+
+
+        .thinking-message .message-text p { 
+            font-style: italic;
+            display: flex;
+            align-items: baseline;
+            color: var(--text-secondary-color); 
+        }
+        .thinking-message .message-text p span { 
+            animation: blink 1.4s infinite both;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .thinking-message .message-text p span:nth-child(1) { animation-delay: 0s; }
+        .thinking-message .message-text p span:nth-child(2) { animation-delay: 0.2s; }
+        .thinking-message .message-text p span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes blink {
+            0%, 80%, 100% { opacity: 0; }
+            40% { opacity: 1; }
         }
 
-        .thinking-message.ai-message {
-            background-color: var(--theme-ai-message-bg);
-            border-color: var(--theme-ai-message-border);
-        }
-        .thinking-message p { font-style: italic; color: var(--theme-ai-text-color); opacity: 0.7; }
-
-
-        #chat-box::-webkit-scrollbar, #user-input::-webkit-scrollbar { width: 10px; }
-        #chat-box::-webkit-scrollbar-track, #user-input::-webkit-scrollbar-track { background: #2C3034; border-radius: 10px; }
-        #chat-box::-webkit-scrollbar-thumb, #user-input::-webkit-scrollbar-thumb { background: var(--theme-button-secondary-bg); border-radius: 10px; border: 2px solid #2C3034; }
-        #chat-box::-webkit-scrollbar-thumb:hover, #user-input::-webkit-scrollbar-thumb:hover { background: var(--theme-gold-accent); }
-
-
-        @media (max-width: 768px) {
-            .chat-container { border-radius: 0; max-height: 100vh; max-width: 100%; }
+        /* Mobile Responsiveness */
+        @media (max-width: 600px) {
+            body { padding: 5px; }
+            .chat-container {
+                height: calc(100vh - 10px); /* Full height minus body padding */
+                max-height: none; /* Remove desktop max-height */
+                border-radius: 10px; /* Slightly less rounded */
+                border: none; /* Optional: remove border for edge-to-edge feel */
+            }
             .header-bar { padding: 12px 15px; }
-            .header-bar h1 { font-size: 1.25em; }
-            #chat-box { padding: 15px; gap: 12px; }
-            .message { max-width: 90%; padding: 10px 15px;}
+            .header-bar h1 { font-size: 1.3em; } /* Smaller title */
+            #reset-chat-button { padding: 7px 12px; font-size: 0.8em; gap: 5px;}
+            #reset-chat-button .fa-sync-alt { margin-right: 3px; }
+
+
+            #chat-box { padding: 15px 10px; gap: 12px; } /* Less padding, smaller gap */
+            .message { max-width: 90%; }
+            .message-avatar { width: 32px; height: 32px; font-size: 1em; } /* Smaller avatar */
+            .user-message .message-avatar { margin-left: 8px; }
+            .ai-message .message-avatar { margin-right: 8px; }
+            .message-content-wrapper { padding: 10px 15px; border-radius: 15px; }
+
+            .message-meta {
+                font-size: 0.8em; /* Slightly larger for mobile readability */
+                gap: 8px; /* Slightly reduce gap */
+            }
+            .copy-msg-btn { font-size: 1em; }
+
+
+            .message-text pre {
+                font-size: 0.85em; /* Smaller code font */
+                padding: 12px; /* Less padding */
+            }
+            .copy-code-button {
+                font-size: 0.75em;
+                padding: 5px 8px;
+                top: 8px;
+                right: 8px;
+            }
+            
+            #file-upload-area { padding: 10px 15px; }
+            .file-upload-button { padding: 7px 12px; font-size: 0.85em; gap: 6px; }
+            #file-info-container { font-size: 0.8em; margin-left: 8px; }
+            #remove-file-button {
+                font-size: 1.1em; /* Smaller remove icon */
+                padding: 0 3px;
+                margin-left: 5px;
+            }
+
             #chat-form { padding: 10px 15px; }
-            #user-input { padding: 10px 15px; font-size: 0.95em; }
-            #send-button { width: 44px; height: 44px; font-size: 1.1em;}
+            #user-input { 
+                padding: 10px 15px; 
+                font-size: 0.95em; 
+                margin-right: 8px;
+                min-height: 24px; 
+            }
+            #send-button { 
+                width: 44px; 
+                height: 44px; 
+                font-size: 1.2em; /* Icon size */
+            }
         }
-        @media (max-width: 600px) { /* Adjusted breakpoint for header controls */
-            .header-bar h1 { font-size: 1.1em; }
-            .header-controls { gap: 5px; }
-            .header-controls button { width: 36px; height: 36px; font-size: 0.85em; padding: 6px 8px;}
-            #reset-chat-button .button-text { display: none; }
-            #reset-chat-button { padding: 8px 10px; width: 36px; height: 36px; border-radius: 50%;}
+
+        /* Even smaller screens, e.g., iPhone SE landscape or very narrow portrait */
+        @media (max-width: 400px) {
+            .header-bar h1 { font-size: 1.15em; }
+            #reset-chat-button { font-size: 0.75em; padding: 6px 10px; }
+            #reset-chat-button span { display: none; } /* Show only icon for "New Chat" */
+            #reset-chat-button .fas.fa-sync-alt { margin-right: 0; }
+
+
+            .file-upload-button { font-size: 0.8em; padding: 6px 10px; }
+            .file-upload-button .fa-paperclip { margin-right: 4px; }
+            .file-upload-button span { display: none; } /* Show only icon for "Attach" */
+
+
+            #user-input { font-size: 0.9em; }
+            #send-button { width: 40px; height: 40px; font-size: 1.1em; }
         }
-        @media (max-width: 480px) {
-            #file-upload-area { padding: 8px 12px; flex-wrap: wrap; }
-            .file-upload-button { font-size: 0.8em; padding: 7px 10px; gap: 5px; margin-bottom: 5px; }
-            #file-name-display { font-size: 0.8em; width: 100%; margin-left: 0; text-align: center; margin-top: 5px; }
-        }
+
     </style>
 </head>
 <body>
     <div class="chat-container">
         <div class="header-bar">
-            <h1>A.I. Assistant</h1>
-            <div class="header-controls">
-                <button id="mic-button" title="Activate Voice Input">
-                    <i class="fas fa-microphone"></i>
-                </button>
-                <button id="wake-word-button" title="Toggle 'Hey Jarvis' Wake Word">
-                    <i class="fas fa-assistive-listening-systems"></i>
-                </button>
-                <button id="tts-button" title="Toggle AI Speech Output">
-                    <i class="fas fa-volume-up"></i>
-                </button>
-                <button id="reset-chat-button" title="Start New Protocol">
-                    <i class="fas fa-sync-alt"></i>
-                    <span class="button-text">New Protocol</span>
-                </button>
-            </div>
+            <h1>Subrat</h1>
+            <button id="reset-chat-button" title="Start New Chat">
+                <i class="fas fa-sync-alt"></i> <span>New Chat</span>
+            </button>
         </div>
-        <div id="listening-status">Listening...</div>
         <div id="chat-box">
             <!-- Messages will appear here -->
         </div>
         <div id="file-upload-area">
-            <label for="file-input" class="file-upload-button">
-                <i class="fas fa-paperclip"></i> Attach Intel
-            </label>
             <input type="file" id="file-input" accept=".txt,.js,.py,.html,.css,.md,.json,text/plain,image/jpeg,image/png,image/webp">
-            <span id="file-name-display">No intel loaded</span>
+            <label for="file-input" class="file-upload-button">
+                <i class="fas fa-paperclip"></i> <span>Attach</span>
+            </label>
+            <div id="file-info-container">
+                <span id="file-name-display">No file selected</span>
+                <button id="remove-file-button" style="display:none;" title="Remove file">&times;</button>
+            </div>
         </div>
         <form id="chat-form">
-            <textarea id="user-input" placeholder="Enter command or query..." rows="1"></textarea>
-            <button type="submit" id="send-button" title="Execute Command">
+            <textarea id="user-input" placeholder="Type your message..." rows="1"></textarea>
+            <button type="submit" id="send-button" title="Send Message">
                 <i class="fas fa-paper-plane"></i>
             </button>
         </form>
@@ -460,18 +571,9 @@
 
     <script>
         marked.setOptions({
-            sanitize: false,
+            sanitize: false, 
             breaks: true,
-            gfm: true,
-            highlight: function (code, lang) {
-                const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-                try {
-                    return hljs.highlight(code, { language, ignoreIllegals: true }).value;
-                } catch (e) {
-                    console.error("Highlight.js error:", e, "for lang:", lang);
-                    return hljs.highlight(code, { language: 'plaintext', ignoreIllegals: true }).value;
-                }
-            }
+            gfm: true
         });
 
         const chatForm = document.getElementById('chat-form');
@@ -479,743 +581,370 @@
         const chatBox = document.getElementById('chat-box');
         const fileInput = document.getElementById('file-input');
         const fileNameDisplay = document.getElementById('file-name-display');
+        const removeFileButton = document.getElementById('remove-file-button');
         const resetChatButton = document.getElementById('reset-chat-button');
 
-        const micButton = document.getElementById('mic-button');
-        const wakeWordButton = document.getElementById('wake-word-button');
-        const ttsButton = document.getElementById('tts-button');
-        const listeningStatus = document.getElementById('listening-status');
-
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        let recognition;
-        let isListeningForWakeWord = false;
-        let isListeningForCommand = false;
-        let autoRestartWakeWord = false; 
-        let synth = window.speechSynthesis;
-        let autoSpeakAIResponses = true;
-        const WAKE_WORD = "hey jarvis";
-        let currentUtterance = null;
-
-
-        const BACKEND_URL = 'https://my-gemini-chatbot.onrender.com'; 
-        const CHAT_HISTORY_KEY = 'geminiChatHistory_IronManTheme_NoMedia_V2_Speech';
+        const PLACEHOLDER_BACKEND_URL = 'YOUR_ACTUAL_DEPLOYED_BACKEND_URL_PLACEHOLDER';
+        const YOUR_BACKEND_URL = 'https://my-gemini-chatbot.onrender.com'; // Your User-Provided URL
 
         let uploadedFileContent = null;
         let uploadedFileName = null;
         let uploadedFileType = null;
+        
+        const defaultPlaceholder = "Type your message to Subrat...";
+        const mobilePlaceholder = "Type your message...";
 
-        function isBackendConfigured() { return BACKEND_URL && BACKEND_URL.startsWith('http'); }
-        function clearChatDisplay() { chatBox.innerHTML = ''; }
+        function setPlaceholder() {
+            if (window.innerWidth <= 600 && !uploadedFileName) { // Only use mobile placeholder if no file is selected
+                userInputField.placeholder = mobilePlaceholder;
+            } else if (!uploadedFileName) {
+                userInputField.placeholder = defaultPlaceholder;
+            } // If file is selected, placeholder is handled by file input logic
+        }
 
-        function updateListeningStatus(text, show = true) {
-            if (listeningStatus) {
-                listeningStatus.textContent = text;
-                listeningStatus.style.display = show ? 'block' : 'none';
-                // Adjust chatBox paddingTop if status is visible
-                chatBox.style.paddingTop = show ? '5px' : '20px';
-            }
+
+        function clearChatDisplay() {
+            chatBox.innerHTML = '';
+        }
+
+        function addInitialAiGreeting() {
+            addMessageToChatBox("Subrat AI online. Systems nominal. How may I assist you?", 'ai');
         }
         
-        function initializeSpeechRecognition() {
-            if (!SpeechRecognition) {
-                console.warn("Speech Recognition API not supported in this browser.");
-                if(micButton) { micButton.disabled = true; micButton.title = "Voice input not supported"; }
-                if(wakeWordButton) { wakeWordButton.disabled = true; wakeWordButton.title = "Wake word not supported"; }
-                updateListeningStatus("Speech recognition not supported.", true);
-                setTimeout(() => updateListeningStatus("", false), 3000);
+        function checkBackendConfigured() {
+            if (YOUR_BACKEND_URL === PLACEHOLDER_BACKEND_URL) {
+                addMessageToChatBox('Backend URL not configured. Please update YOUR_BACKEND_URL in the script.', 'system-notification', false, true);
                 return false;
             }
-
-            recognition = new SpeechRecognition();
-            recognition.lang = 'en-US';
-
-            recognition.onstart = () => {
-                if (isListeningForCommand) {
-                    updateListeningStatus("Listening for your command...");
-                    if(micButton) micButton.classList.add('active');
-                } else if (isListeningForWakeWord) {
-                    updateListeningStatus("Listening for 'Hey Jarvis'...");
-                    if(wakeWordButton) wakeWordButton.classList.add('active');
-                }
-            };
-
-            recognition.onend = () => {
-                if (!isListeningForCommand && !isListeningForWakeWord) { // General stop
-                     updateListeningStatus("Stopped listening.", true);
-                     setTimeout(() => updateListeningStatus("", false), 1500);
-                }
-                if(micButton) micButton.classList.remove('active');
-                // Wake word button 'active' state is managed by its toggle function primarily
-
-                if (isListeningForCommand) isListeningForCommand = false;
-
-                if (autoRestartWakeWord && isListeningForWakeWord) {
-                    console.log("Restarting wake word listener due to onend.");
-                    try {
-                        recognition.start();
-                    } catch (e) {
-                        console.error("Error restarting recognition onend:", e);
-                        toggleWakeWordListening(false); // Turn off if restart fails
-                    }
-                } else if (isListeningForWakeWord && !autoRestartWakeWord) {
-                    // Manually stopped or wake word found
-                    isListeningForWakeWord = false; 
-                    if(wakeWordButton) wakeWordButton.classList.remove('active');
-                }
-            };
-
-            recognition.onerror = (event) => {
-                console.error('Speech recognition error:', event.error);
-                let errorMsg = "Speech error: " + event.error;
-                if (event.error === 'no-speech') {
-                    errorMsg = "No speech detected. Try again.";
-                } else if (event.error === 'audio-capture') {
-                    errorMsg = "Microphone error. Check connection/permissions.";
-                } else if (event.error === 'not-allowed') {
-                    errorMsg = "Microphone permission denied. Enable in browser settings.";
-                    if(micButton) { micButton.disabled = true; micButton.title = "Mic permission denied"; }
-                    if(wakeWordButton) { wakeWordButton.disabled = true; wakeWordButton.title = "Mic permission denied"; }
-                }
-                updateListeningStatus(errorMsg, true);
-                setTimeout(() => updateListeningStatus("", false), 3000);
-
-                isListeningForCommand = false;
-                if(micButton) micButton.classList.remove('active');
-                if (isListeningForWakeWord && (event.error === 'not-allowed' || event.error === 'aborted')) {
-                    toggleWakeWordListening(false); // Turn off wake word mode for critical errors
-                } else if (isListeningForWakeWord && autoRestartWakeWord) {
-                    // For other errors like 'network', onend should handle restart if autoRestartWakeWord is true
-                } else {
-                    isListeningForWakeWord = false; // Ensure it's off if not auto-restarting
-                    if(wakeWordButton) wakeWordButton.classList.remove('active');
-                }
-            };
-
-            recognition.onresult = (event) => {
-                let transcript = '';
-                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                    transcript += event.results[i][0].transcript;
-                }
-                transcript = transcript.trim().toLowerCase();
-                console.log("Recognized:", transcript);
-
-                if (isListeningForWakeWord) {
-                    if (transcript.includes(WAKE_WORD)) {
-                        console.log("Wake word detected!");
-                        updateListeningStatus("Jarvis activated! Speak command...", true);
-                        autoRestartWakeWord = false; 
-                        recognition.stop(); 
-                        isListeningForWakeWord = false; 
-                        if(wakeWordButton) wakeWordButton.classList.remove('active'); // Temp remove active, command listener will handle its own
-                        
-                        startListeningForCommand(true); 
-                    }
-                } else if (isListeningForCommand) {
-                    if (event.results[event.results.length -1].isFinal) {
-                        const finalTranscript = event.results[event.results.length -1][0].transcript.trim();
-                        console.log("Final command:", finalTranscript);
-                        userInputField.value = finalTranscript;
-                        userInputField.dispatchEvent(new Event('input', { bubbles: true })); 
-                        
-                        autoRestartWakeWord = false; 
-                        recognition.stop(); 
-                        isListeningForCommand = false;
-                        if(micButton) micButton.classList.remove('active');
-
-                        handleSendMessage(); 
-
-                        if (wakeWordButton && wakeWordButton.classList.contains('wake-word-active-persistent')) {
-                            console.log("Restarting wake word listening after command (from wake word mode).");
-                            setTimeout(() => {
-                                if (wakeWordButton.classList.contains('wake-word-active-persistent')) {
-                                   toggleWakeWordListening(true); 
-                                }
-                            }, 1000); // Delay to avoid AI speech being picked up
-                        }
-                    }
-                }
-            };
             return true;
         }
 
-        function startListeningForCommand(triggeredByWakeWord = false) {
-            if (!recognition) {
-                if (!initializeSpeechRecognition()) return;
-            }
-             if (isListeningForWakeWord && !triggeredByWakeWord) {
-                console.log("Manual command input, stopping wake word listener.");
-                autoRestartWakeWord = false;
-                recognition.stop(); 
-                isListeningForWakeWord = false;
-                if(wakeWordButton) wakeWordButton.classList.remove('active');
-                if(wakeWordButton) wakeWordButton.classList.remove('wake-word-active-persistent');
-            }
-            
-            stopTTS(); 
-
-            isListeningForCommand = true;
-            isListeningForWakeWord = false; 
-            autoRestartWakeWord = false; 
-
-            recognition.continuous = false;
-            recognition.interimResults = false; 
-
-            try {
-                recognition.start();
-            } catch (e) {
-                console.error("Error starting command recognition:", e);
-                isListeningForCommand = false;
-                if (e.name === 'InvalidStateError') { 
-                    updateListeningStatus("Already listening. Speak now.", true);
-                     setTimeout(() => updateListeningStatus("", false), 2000);
-                } else {
-                    updateListeningStatus("Could not start listening. Check mic permissions.", true);
-                    setTimeout(() => updateListeningStatus("", false), 3000);
-                }
-            }
-        }
-
-        function toggleWakeWordListening(forceStart) {
-            if (!recognition) {
-                if (!initializeSpeechRecognition()) return;
-            }
-            stopTTS();
-
-            const shouldBeListening = typeof forceStart === 'boolean' ? forceStart : !isListeningForWakeWord;
-
-            if (shouldBeListening) {
-                if (isListeningForCommand) {
-                    console.log("Stopping command listener to start wake word listener.");
-                    recognition.stop(); 
-                    isListeningForCommand = false;
-                    if(micButton) micButton.classList.remove('active');
-                }
-                
-                isListeningForWakeWord = true;
-                autoRestartWakeWord = true; 
-                if(wakeWordButton) {
-                    wakeWordButton.classList.add('active');
-                    wakeWordButton.classList.add('wake-word-active-persistent');
-                    wakeWordButton.title = "Stop 'Hey Jarvis' Wake Word";
-                }
-
-                recognition.continuous = true;
-                recognition.interimResults = true; 
-
-                try {
-                    recognition.start();
-                    console.log("Wake word listener started.");
-                } catch (e) {
-                    console.error("Error starting wake word recognition:", e);
-                    isListeningForWakeWord = false;
-                    autoRestartWakeWord = false;
-                    if(wakeWordButton) {
-                        wakeWordButton.classList.remove('active');
-                        wakeWordButton.classList.remove('wake-word-active-persistent');
-                        wakeWordButton.title = "Toggle 'Hey Jarvis' Wake Word";
-                    }
-                    updateListeningStatus("Could not start wake word listening. Check mic permissions.", true);
-                     setTimeout(() => updateListeningStatus("", false), 3000);
-                }
-            } else {
-                console.log("Stopping wake word listener manually.");
-                isListeningForWakeWord = false;
-                autoRestartWakeWord = false; 
-                if(wakeWordButton) {
-                    wakeWordButton.classList.remove('active');
-                    wakeWordButton.classList.remove('wake-word-active-persistent');
-                    wakeWordButton.title = "Toggle 'Hey Jarvis' Wake Word";
-                }
-                if (recognition) { 
-                   try { recognition.stop(); } catch(e) { console.warn("Error stopping recognition (already stopped?):", e); }
-                }
-                updateListeningStatus("Wake word detection OFF.", true);
-                setTimeout(() => updateListeningStatus("", false), 2000);
-            }
-        }
-
-        function speakText(textToSpeak) {
-            if (!autoSpeakAIResponses || !synth || !textToSpeak) {
-                return;
-            }
-            if (synth.speaking) {
-                console.log("TTS: Cancelling previous speech.");
-                synth.cancel(); 
-            }
-
-            const tempDiv = document.createElement('div');
-            try {
-                 tempDiv.innerHTML = marked.parse(String(textToSpeak));
-            } catch (e) {
-                console.error("Markdown parsing error for TTS:", e);
-                tempDiv.textContent = String(textToSpeak); // Fallback to raw text
-            }
-           
-            let cleanText = tempDiv.textContent || tempDiv.innerText || "";
-            cleanText = cleanText.replace(/\[Image:.*?\]/g, "Image displayed.")
-                                 .replace(/CopyCopied!Error/g, '')
-                                 .trim();
-
-            if (!cleanText) {
-                console.log("TTS: No speakable text content found.");
-                return;
-            }
-            
-            currentUtterance = new SpeechSynthesisUtterance(cleanText);
-            currentUtterance.onerror = (event) => {
-                console.error('SpeechSynthesisUtterance.onerror', event);
-                let errorMsg = "TTS Error: " + event.error;
-                if (event.error === 'synthesis-failed') errorMsg = "AI speech synthesis failed.";
-                else if (event.error === 'language-unavailable') errorMsg = "AI speech language for TTS unavailable.";
-                else if (event.error === 'voice-unavailable') errorMsg = "AI speech voice for TTS unavailable.";
-                addMessageToChatBox(errorMsg, 'system-notification', {isError: true, autoDismiss: 3000, contentType: 'text/plain'});
-                currentUtterance = null;
-            };
-            currentUtterance.onend = () => {
-                currentUtterance = null;
-                console.log("TTS: Finished speaking.");
-            };
-            
-            console.log("TTS: Speaking:", cleanText.substring(0, 70) + "...");
-            synth.speak(currentUtterance);
-        }
-
-        function toggleTTS() {
-            autoSpeakAIResponses = !autoSpeakAIResponses;
-            if (ttsButton) {
-                const icon = ttsButton.querySelector('i');
-                if (autoSpeakAIResponses) {
-                    icon.classList.remove('fa-volume-mute');
-                    icon.classList.add('fa-volume-up');
-                    ttsButton.classList.add('active');
-                    ttsButton.title = "Mute AI Speech Output";
-                    // speakText("A.I. speech enabled."); // Confirmation (can be a bit chatty)
-                } else {
-                    icon.classList.remove('fa-volume-up');
-                    icon.classList.add('fa-volume-mute');
-                    ttsButton.classList.remove('active');
-                    ttsButton.title = "Unmute AI Speech Output";
-                    stopTTS(); 
-                }
-            }
-        }
-
-        function stopTTS() {
-            if (synth && synth.speaking) {
-                synth.cancel();
-                console.log("TTS: Speech stopped by user/system.");
-            }
-            currentUtterance = null;
-        }
-
-
-        function addInitialAiGreeting() {
-            const greeting = "Systems online. A.I. Assistant ready. How may I be of service?";
-            addMessageToChatBox(greeting, 'ai', { contentType: 'text/markdown' });
-            saveMessageToHistory('ai', greeting, 'text/markdown');
+        function resetFileUpload() {
+            fileNameDisplay.textContent = 'No file selected';
+            removeFileButton.style.display = 'none';
+            uploadedFileContent = null;
+            uploadedFileName = null;
+            uploadedFileType = null;
+            fileInput.value = ''; 
+            setPlaceholder(); 
         }
 
         resetChatButton.addEventListener('click', async () => {
-            stopTTS();
-            if (recognition) {
-                autoRestartWakeWord = false; 
-                try { recognition.abort(); } catch(e) { console.warn("Error aborting recognition:", e); }
-            }
-            isListeningForCommand = false;
-            isListeningForWakeWord = false;
-            if(micButton) micButton.classList.remove('active');
-            if(wakeWordButton) {
-                wakeWordButton.classList.remove('active');
-                wakeWordButton.classList.remove('wake-word-active-persistent');
-                 wakeWordButton.title = "Toggle 'Hey Jarvis' Wake Word";
-            }
-            updateListeningStatus("", false);
+            if (!checkBackendConfigured()) return;
 
-            if (!isBackendConfigured()) {
-                addMessageToChatBox('Backend URL not configured. Critical system error.', 'system-notification', { isError: true, contentType: 'text/plain' });
-                return;
-            }
-            addMessageToChatBox("Initializing new protocol sequence...", 'system-notification', { autoDismiss: 2000, contentType: 'text/plain' });
             try {
-                const response = await fetch(`${BACKEND_URL}/reset-chat`, { method: 'POST' });
+                const response = await fetch(`${YOUR_BACKEND_URL}/reset-chat`, { method: 'POST' });
                 if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({ error: 'Failed to parse error from backend reset' }));
+                    const errorData = await response.json().catch(() => ({ error: 'Failed to parse error response from server.' }));
                     throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
                 }
-                await response.json();
-
+                const data = await response.json();
+                console.log(data.message); 
                 clearChatDisplay();
-                localStorage.removeItem(CHAT_HISTORY_KEY);
                 addInitialAiGreeting();
-                userInputField.placeholder = "Enter command or query...";
-                fileNameDisplay.textContent = 'No intel loaded';
-                uploadedFileContent = null; uploadedFileName = null; uploadedFileType = null;
-                fileInput.value = '';
-                addMessageToChatBox("Protocol reset. Awaiting input.", 'system-notification', { autoDismiss: 3000, contentType: 'text/plain' });
+                resetFileUpload();
+                addMessageToChatBox("Chat session reset. Awaiting your command.", 'system-notification');
             } catch (error) {
-                console.error('Error resetting protocol:', error);
-                addMessageToChatBox(`Protocol reset failure: ${error.message}`, 'ai', { isError: true, contentType: 'text/plain' });
+                console.error('Error resetting chat:', error);
+                addMessageToChatBox(`Error resetting chat: ${error.message}`, 'ai', false, true);
             }
         });
 
         userInputField.addEventListener('input', () => {
-            stopTTS(); // Stop AI speech if user starts typing
             userInputField.style.height = 'auto';
-            userInputField.style.height = (userInputField.scrollHeight) + 'px';
-            chatForm.style.alignItems = userInputField.scrollHeight > 48 ? 'flex-start' : 'flex-end';
+            let scrollHeight = userInputField.scrollHeight;
+            const maxHeight = 150; 
+            if (scrollHeight > maxHeight) {
+                userInputField.style.height = maxHeight + 'px';
+                userInputField.style.overflowY = 'auto'; 
+            } else {
+                userInputField.style.height = scrollHeight + 'px';
+                userInputField.style.overflowY = 'hidden'; 
+            }
+
+            const thresholdHeight = parseFloat(getComputedStyle(userInputField).lineHeight) * 1.5 + parseFloat(getComputedStyle(userInputField).paddingTop) * 2;
+            chatForm.style.alignItems = userInputField.scrollHeight > thresholdHeight ? 'flex-start' : 'flex-end';
         });
 
         fileInput.addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (file) {
-                handleFileUpload(file);
+                const allowedTextExtensions = ['.txt', '.js', '.py', '.html', '.css', '.md', '.json', '.csv', '.xml', '.java', '.c', '.cpp', '.cs', '.go', '.rb', '.php', '.swift', '.kt', '.ts', '.yaml', '.ini', '.log', '.srt', '.vtt', '.sql', '.r', '.sh', '.bat'];
+                const isAllowedTextExtension = allowedTextExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
+                const allowedImageTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                let placeholderText = "";
+                const shortFileName = file.name.length > 20 ? file.name.substring(0, 17) + "..." : file.name;
+
+
+                if (file.type.startsWith('text/') || file.type === 'application/json' || isAllowedTextExtension) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        uploadedFileContent = e.target.result;
+                        uploadedFileName = file.name;
+                        uploadedFileType = file.type || 'text/plain';
+                        fileNameDisplay.textContent = `${file.name}`;
+                        removeFileButton.style.display = 'inline-block';
+                        userInputField.placeholder = `Ask about ${shortFileName} or type...`;
+                    };
+                    reader.onerror = () => {
+                        addMessageToChatBox("Error reading text file.", 'system-notification', false, true);
+                        resetFileUpload();
+                    };
+                    reader.readAsText(file);
+                } else if (allowedImageTypes.includes(file.type)) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        uploadedFileContent = e.target.result.split(',')[1]; 
+                        uploadedFileName = file.name;
+                        uploadedFileType = file.type;
+                        fileNameDisplay.textContent = `Image: ${file.name}`;
+                        removeFileButton.style.display = 'inline-block';
+                         userInputField.placeholder = `Describe ${shortFileName} or ask...`;
+                    };
+                    reader.onerror = () => {
+                        addMessageToChatBox("Error reading image file.", 'system-notification', false, true);
+                        resetFileUpload();
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    addMessageToChatBox("Unsupported file type. Please upload text or JPEG/PNG/WEBP images.", 'system-notification', false, true);
+                    resetFileUpload();
+                }
             } else {
-                clearUploadedFile();
+                resetFileUpload();
             }
         });
-        
-        function handleFileUpload(file) {
-            const allowedTextExtensions = ['.txt','.js','.py','.html','.css','.md','.json','.csv','.xml','.java','.c','.cpp','.cs','.go','.rb','.php','.swift','.kt','.ts','.yaml','.ini','.log','.srt','.vtt','.sql','.r','.sh','.bat'];
-            const isAllowedTextExtension = allowedTextExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
-            const allowedImageTypes = ['image/jpeg', 'image/png', 'image/webp'];
 
-            if (file.type.startsWith('text/') || file.type === 'application/json' || isAllowedTextExtension) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    uploadedFileContent = e.target.result;
-                    uploadedFileName = file.name;
-                    uploadedFileType = file.type || 'text/plain';
-                    fileNameDisplay.textContent = `Intel: ${file.name}`;
-                    userInputField.placeholder = `Analyze ${file.name} or command...`;
-                };
-                reader.onerror = () => {
-                    fileNameDisplay.textContent = "Error loading intel.";
-                    clearUploadedFile();
-                };
-                reader.readAsText(file);
-            } else if (allowedImageTypes.includes(file.type)) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    uploadedFileContent = e.target.result.split(',')[1];
-                    uploadedFileName = file.name;
-                    uploadedFileType = file.type;
-                    fileNameDisplay.textContent = `Visual: ${file.name}`;
-                    userInputField.placeholder = `Describe ${file.name} or command...`;
-                };
-                reader.onerror = () => {
-                    fileNameDisplay.textContent = "Error loading visual data.";
-                    clearUploadedFile();
-                };
-                reader.readAsDataURL(file);
-            } else {
-                fileNameDisplay.textContent = "Unsupported intel format (Text or JPEG/PNG/WEBP).";
-                clearUploadedFile();
-                fileInput.value = '';
-            }
-        }
-
-        function clearUploadedFile() {
-            uploadedFileContent = null;
-            uploadedFileName = null;
-            uploadedFileType = null;
-            fileNameDisplay.textContent = "No intel loaded";
-            userInputField.placeholder = "Enter command or query...";
-            if (fileInput.value) fileInput.value = '';
-        }
-
-        chatForm.addEventListener('submit', (event) => {
-            stopTTS(); // Stop AI speech on submit
-            handleSendMessage(event);
+        removeFileButton.addEventListener('click', () => {
+            resetFileUpload();
         });
+
+        chatForm.addEventListener('submit', handleSendMessage);
         userInputField.addEventListener('keypress', (event) => {
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
-                stopTTS(); // Stop AI speech on submit
                 handleSendMessage(event);
             }
         });
 
         async function handleSendMessage(event) {
             if (event) event.preventDefault();
-            if (!isBackendConfigured()) {
-                addMessageToChatBox('Backend systems offline. Cannot process command.', 'system-notification', { isError: true, contentType: 'text/plain' });
-                return;
-            }
+            if (!checkBackendConfigured()) return;
 
             let userMessageText = userInputField.value.trim();
             let requestBody = {};
             let displayedUserMessage = userMessageText;
 
-            if (uploadedFileContent && uploadedFileType) {
-                requestBody.file = { content: uploadedFileContent, mimeType: uploadedFileType, name: uploadedFileName };
-                if (uploadedFileType.startsWith('image/')) {
-                    displayedUserMessage = userMessageText ? `${userMessageText} (visual: ${uploadedFileName})` : `Transmitted visual: ${uploadedFileName}`;
-                } else {
-                    displayedUserMessage = userMessageText ? `${userMessageText} (intel: ${uploadedFileName})` : `Transmitted intel: ${uploadedFileName}`;
-                }
-            }
-            requestBody.message = userMessageText;
-
             if (!userMessageText && !uploadedFileContent) {
-                addMessageToChatBox("Awaiting command or intel to process.", 'system-notification', { isError: true, autoDismiss: 3000, contentType: 'text/plain' });
+                addMessageToChatBox("Please type a message or attach a file.", 'system-notification', false, true);
                 return;
             }
 
-            addMessageToChatBox(displayedUserMessage || "Processing visual input...", 'user', { contentType: 'text/plain' });
-            saveMessageToHistory('user', displayedUserMessage || "Processing visual input...", 'text/plain');
+            if (uploadedFileContent && uploadedFileType) {
+                if (uploadedFileType.startsWith('image/')) {
+                    requestBody = {
+                        message: userMessageText,
+                        file: {
+                            content: uploadedFileContent,
+                            mimeType: uploadedFileType,
+                            name: uploadedFileName
+                        }
+                    };
+                    displayedUserMessage = userMessageText ? `${userMessageText} (with image: ${uploadedFileName})` : `Sent image: ${uploadedFileName}`;
+                } else { 
+                    const MAX_FILE_CONTENT_LENGTH = 1 * 1024 * 1024; 
+                    let fileContextSegment = uploadedFileContent;
+                    if (uploadedFileContent.length > MAX_FILE_CONTENT_LENGTH) {
+                        fileContextSegment = uploadedFileContent.substring(0, MAX_FILE_CONTENT_LENGTH) + "\n... [file content truncated due to length]";
+                        console.warn(`Uploaded file content truncated to ${MAX_FILE_CONTENT_LENGTH} characters.`);
+                    }
+                    const fileContext = `\n\n--- Start: ${uploadedFileName} ---\n${fileContextSegment}\n--- End: ${uploadedFileName} ---`;
+                    let fullMessageToSend;
+                    if (userMessageText) {
+                        fullMessageToSend = `User's question: "${userMessageText}"\n\nFile context from "${uploadedFileName}":\n${fileContext}`;
+                        displayedUserMessage = `${userMessageText} (with context from ${uploadedFileName})`;
+                    } else {
+                        fullMessageToSend = `User uploaded "${uploadedFileName}". Analyze content:\n${fileContext}`;
+                        displayedUserMessage = `Sent content of ${uploadedFileName} for analysis.`;
+                    }
+                    requestBody = { message: fullMessageToSend };
+                }
+            } else {
+                requestBody = { message: userMessageText };
+            }
 
+            addMessageToChatBox(displayedUserMessage || "Processing attachment...", 'user');
             userInputField.value = '';
-            userInputField.style.height = 'auto';
+            userInputField.style.height = 'auto'; 
+            userInputField.style.overflowY = 'hidden';
             chatForm.style.alignItems = 'flex-end';
 
-            const thinkingMessageDiv = addMessageToChatBox("Analyzing... Stand by.", 'ai', { isThinking: true, contentType: 'text/plain' });
+
+            const thinkingMessageDiv = addMessageToChatBox("Subrat is thinking", 'ai', true);
 
             try {
-                const response = await fetch(`${BACKEND_URL}/chat`, {
+                const response = await fetch(`${YOUR_BACKEND_URL}/chat`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(requestBody),
                 });
 
-                if (thinkingMessageDiv?.parentNode === chatBox) chatBox.removeChild(thinkingMessageDiv);
+                if (thinkingMessageDiv && thinkingMessageDiv.parentNode === chatBox) {
+                    chatBox.removeChild(thinkingMessageDiv);
+                }
 
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    let errorDetail = `System Error! Status: ${response.status} - ${response.statusText}`;
-                    try {
-                        const errorData = JSON.parse(errorText);
-                        errorDetail = errorData.error || errorData.message || errorDetail;
-                    } catch (e) { /* ignore */ }
-                    throw new Error(errorDetail);
+                    const errorData = await response.json().catch(() => ({ error: 'Failed to parse error response from server.' }));
+                    throw new Error(errorData.error || `HTTP error! Status: ${response.status} - ${response.statusText}`);
                 }
 
                 const data = await response.json();
-                const aiContentType = data.contentType || 'text/markdown';
-                addMessageToChatBox(data.reply, 'ai', { contentType: aiContentType });
-                saveMessageToHistory('ai', data.reply, aiContentType);
-
-                if (uploadedFileContent) {
-                    clearUploadedFile();
-                }
+                addMessageToChatBox(data.reply, 'ai');
+                resetFileUpload(); 
 
             } catch (error) {
-                console.error('Error during transmission:', error);
-                if (thinkingMessageDiv?.parentNode === chatBox) chatBox.removeChild(thinkingMessageDiv);
-                addMessageToChatBox(`Error: ${error.message}`, 'ai', { isError: true, contentType: 'text/plain' });
-                saveMessageToHistory('system-error', `Error: ${error.message}`, 'text/plain');
+                console.error('Error sending message:', error);
+                if (thinkingMessageDiv && thinkingMessageDiv.parentNode === chatBox) {
+                    chatBox.removeChild(thinkingMessageDiv);
+                }
+                addMessageToChatBox(`Error: ${error.message}`, 'ai', false, true);
             }
         }
 
-        function addMessageToChatBox(messageContent, sender, options = {}) {
-            let { isThinking = false, isError = false, autoDismiss = 0, contentType = 'text/plain' } = options;
-        
-            if (sender === 'ai' && !isThinking && !isError && !contentType.startsWith('image/')) {
-                 contentType = options.contentType || 'text/markdown';
-            }
-        
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message', `${sender}-message`);
+        function addMessageToChatBox(message, sender, isThinking = false, isError = false) {
+            const messageWrapper = document.createElement('div');
+            messageWrapper.classList.add('message', `${sender}-message`);
 
             if (sender === 'system-notification') {
-                messageDiv.classList.add('system-message');
-                if (isError) { messageDiv.classList.add('error-message'); }
-            } else if (isError) { messageDiv.classList.add('error-message'); }
+                messageWrapper.classList.add('system-message');
+                // Error class for system messages is handled by JS for content wrapper styling
+            }
+            
+            const avatarDiv = document.createElement('div');
+            avatarDiv.classList.add('message-avatar');
+            const avatarIcon = document.createElement('i');
+            avatarIcon.classList.add('fas');
+            if (sender === 'user') {
+                avatarIcon.classList.add('fa-user-astronaut');
+            } else if (sender === 'ai') {
+                avatarIcon.classList.add('fa-robot');
+            } else if (sender === 'system-notification') {
+                 avatarIcon.classList.add('fa-info-circle');
+            }
+            avatarDiv.appendChild(avatarIcon);
 
-            if (isThinking) messageDiv.classList.add('thinking-message');
-        
-            if (sender === 'ai' && !isThinking && !isError) {
-                let finalContent = messageContent;
-                if (typeof messageContent === 'object' && messageContent !== null && messageContent.url && messageContent.type?.startsWith('image/')) {
-                    finalContent = messageContent.url;
-                    contentType = messageContent.type;
-                }
-                const isImageURL = typeof finalContent === 'string' && /\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i.test(finalContent);
-                const isImageDataURI = typeof finalContent === 'string' && finalContent.startsWith('data:image/');
-        
-                if (contentType.startsWith('image/') || isImageURL || isImageDataURI) {
-                    const img = document.createElement('img');
-                    img.src = finalContent;
-                    img.alt = "Generated Visual Data";
-                    img.className = 'generated-image';
-                    img.onload = () => { chatBox.scrollTop = chatBox.scrollHeight; }
-                    img.onerror = () => {
-                        console.error("Failed to load visual data:", finalContent);
-                        const p = document.createElement('p');
-                        p.textContent = "[Error: Visual data corrupted or missing.]";
-                        messageDiv.innerHTML = ''; messageDiv.appendChild(p);
-                    };
-                    messageDiv.appendChild(img);
-                } else {
-                    const markdownContainer = document.createElement('div');
-                    markdownContainer.className = 'markdown-content';
-                    try { markdownContainer.innerHTML = marked.parse(String(finalContent)); }
-                    catch (e) {
-                        console.error("Markdown parsing error:", e, String(finalContent).substring(0,100));
-                        markdownContainer.textContent = String(finalContent);
-                    }
-        
-                    markdownContainer.querySelectorAll('pre code:not(.hljs)').forEach(block => {
-                        try { hljs.highlightElement(block); }
-                        catch (e) { console.warn("Highlight.js error on block:", e); }
-                    });
-                    markdownContainer.querySelectorAll('pre:not(:has(.copy-code-button))').forEach(pre => {
-                        const codeElement = pre.querySelector('code');
-                        const codeContent = codeElement ? codeElement.textContent : pre.textContent;
-                        if (codeContent) {
-                            pre.style.position = 'relative';
-                            const copyButton = document.createElement('button');
-                            copyButton.innerHTML = '<i class="fas fa-copy"></i> Copy';
-                            copyButton.className = 'copy-code-button';
-                            copyButton.addEventListener('click', () => {
-                                navigator.clipboard.writeText(codeContent).then(() => {
-                                    copyButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                                    copyButton.classList.add('copied');
-                                    setTimeout(() => {
-                                        copyButton.innerHTML = '<i class="fas fa-copy"></i> Copy';
-                                        copyButton.classList.remove('copied');
-                                    }, 2000);
-                                }).catch(err => {
-                                    copyButton.textContent = 'Error';
-                                    console.error('Failed to copy code: ', err);
-                                });
-                            });
-                            pre.appendChild(copyButton);
-                        }
-                    });
-                    messageDiv.appendChild(markdownContainer);
-                    if (sender === 'ai' && autoSpeakAIResponses) {
-                        speakText(String(finalContent));
-                    }
-                }
-            } else { // User messages, system notifications, thinking messages
+            const messageContentWrapper = document.createElement('div');
+            messageContentWrapper.classList.add('message-content-wrapper');
+             if (isError && (sender === 'ai' || sender === 'system-notification')) { 
+                messageContentWrapper.style.backgroundColor = 'var(--error-bg)';
+                messageContentWrapper.style.color = 'var(--error-text)';
+                // Optionally add border: messageContentWrapper.style.border = '1px solid var(--error-text)';
+            }
+
+            const messageTextDiv = document.createElement('div');
+            messageTextDiv.classList.add('message-text');
+
+            if (isThinking) {
+                messageWrapper.classList.add('thinking-message'); 
                 const p = document.createElement('p');
-                p.textContent = String(messageContent);
-                messageDiv.appendChild(p);
-            }
-        
-            if (messageDiv.innerHTML.trim() !== "") chatBox.appendChild(messageDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        
-            if (autoDismiss > 0) {
-                setTimeout(() => {
-                    if (messageDiv.parentNode === chatBox) {
-                        messageDiv.style.transition = 'opacity 0.5s ease';
-                        messageDiv.style.opacity = '0';
-                        setTimeout(() => messageDiv.remove(), 500);
+                p.innerHTML = `${message}<span>.</span><span>.</span><span>.</span>`;
+                messageTextDiv.appendChild(p);
+            } else if (sender === 'system-notification' || (isError && sender === 'ai') || sender === 'user') {
+                const p = document.createElement('p');
+                p.textContent = message;
+                messageTextDiv.appendChild(p);
+            } else { // AI message with Markdown (not error, not thinking)
+                const markdownContainer = document.createElement('div');
+                markdownContainer.innerHTML = marked.parse(message);
+                
+                markdownContainer.querySelectorAll('pre').forEach(pre => {
+                    const codeElement = pre.querySelector('code');
+                    const codeContent = codeElement ? codeElement.textContent : pre.textContent;
+
+                    if (codeContent && !pre.querySelector('.copy-code-button')) {
+                        const copyButton = document.createElement('button');
+                        copyButton.innerHTML = '<i class="fas fa-copy"></i> Copy Code';
+                        copyButton.className = 'copy-code-button';
+                        copyButton.addEventListener('click', () => {
+                            navigator.clipboard.writeText(codeContent).then(() => {
+                                copyButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                                copyButton.classList.add('copied');
+                                setTimeout(() => {
+                                    copyButton.innerHTML = '<i class="fas fa-copy"></i> Copy Code';
+                                    copyButton.classList.remove('copied');
+                                }, 2000);
+                            }).catch(err => {
+                                copyButton.textContent = 'Error';
+                                console.error('Failed to copy code: ', err);
+                                alert('Could not copy code. Ensure you are on HTTPS or localhost, and check browser permissions.');
+                            });
+                        });
+                        pre.appendChild(copyButton);
                     }
-                }, autoDismiss);
+                });
+                messageTextDiv.appendChild(markdownContainer);
             }
-            return messageDiv;
-        }
+            messageContentWrapper.appendChild(messageTextDiv);
 
-        function saveMessageToHistory(sender, content, contentType = 'text/plain') {
-            if (sender === 'system-notification') return;
-            const history = getChatHistory();
-            let storableContent = (typeof content === 'object' && content !== null && content.url) ? content.url : content;
-            history.push({ sender, content: String(storableContent), contentType, timestamp: new Date().toISOString() });
-            try {
-                localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
+            if (!isThinking && message.trim() !== "" && sender !== 'system-notification') { 
+                const metaDiv = document.createElement('div');
+                metaDiv.classList.add('message-meta');
+
+                const timestampSpan = document.createElement('span');
+                timestampSpan.classList.add('timestamp');
+                timestampSpan.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                metaDiv.appendChild(timestampSpan);
+
+                const copyMsgButton = document.createElement('button');
+                copyMsgButton.classList.add('copy-msg-btn');
+                copyMsgButton.title = "Copy message text";
+                copyMsgButton.innerHTML = '<i class="far fa-copy"></i>';
+                
+                copyMsgButton.addEventListener('click', () => {
+                    const textToCopy = messageTextDiv.textContent || ""; 
+
+                    if (textToCopy.trim()) {
+                        navigator.clipboard.writeText(textToCopy.trim()).then(() => {
+                            copyMsgButton.innerHTML = '<i class="fas fa-check"></i>';
+                            setTimeout(() => {
+                                copyMsgButton.innerHTML = '<i class="far fa-copy"></i>';
+                            }, 1500);
+                        }).catch(err => {
+                            console.error('Failed to copy message text: ', err);
+                            alert('Could not copy text. Ensure you are on HTTPS or localhost, and check browser permissions.');
+                        });
+                    } else {
+                        console.warn('No text content found in messageTextDiv to copy.');
+                    }
+                });
+                metaDiv.appendChild(copyMsgButton);
+                messageContentWrapper.appendChild(metaDiv);
             }
-            catch (e) {
-                console.error("Error saving protocol history:", e);
-                addMessageToChatBox("Could not save protocol history. Storage may be compromised.", 'system-notification', { isError: true, autoDismiss: 5000, contentType: 'text/plain' });
+            
+            if (sender === 'user') {
+                messageWrapper.appendChild(messageContentWrapper);
+                messageWrapper.appendChild(avatarDiv);
+            } else { 
+                messageWrapper.appendChild(avatarDiv);
+                messageWrapper.appendChild(messageContentWrapper);
             }
-        }
 
-        function getChatHistory() {
-            const history = localStorage.getItem(CHAT_HISTORY_KEY);
-            try { return history ? JSON.parse(history) : []; }
-            catch (e) {
-                console.error("Error parsing protocol history:", e);
-                localStorage.removeItem(CHAT_HISTORY_KEY); return [];
+            if (messageTextDiv.innerHTML.trim() !== "" || isThinking) {
+                chatBox.appendChild(messageWrapper);
             }
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return messageWrapper;
         }
-
-        function loadChatHistory() {
-            clearChatDisplay();
-            const history = getChatHistory();
-            if (history.length > 0) {
-                history.forEach(msg => addMessageToChatBox(msg.content, msg.sender, { contentType: msg.contentType || (msg.sender === 'ai' ? 'text/markdown' : 'text/plain') }));
-                addMessageToChatBox("Protocol history restored.", 'system-notification', { autoDismiss: 2000, contentType: 'text/plain' });
-            } else {
-                if (!isBackendConfigured()) {
-                    addMessageToChatBox("Welcome. Backend systems appear offline. Configure BACKEND_URL, then initialize 'New Protocol'.", 'system-notification', {contentType: 'text/plain'});
-                } else {
-                     addMessageToChatBox("Welcome. Enter command or initialize 'New Protocol'.", 'system-notification', { autoDismiss: 3000, contentType: 'text/plain'});
-                }
-            }
-        }
-        
-        // Event listeners for new speech control buttons
-        if (micButton) {
-            micButton.addEventListener('click', () => {
-                if (isListeningForCommand) {
-                    autoRestartWakeWord = false;
-                    if(recognition) recognition.stop();
-                    isListeningForCommand = false;
-                    micButton.classList.remove('active');
-                    updateListeningStatus("Voice input stopped.", true);
-                    setTimeout(() => updateListeningStatus("", false), 1500);
-                } else {
-                    startListeningForCommand();
-                }
-            });
-        }
-
-        if (wakeWordButton) {
-            wakeWordButton.addEventListener('click', () => {
-                toggleWakeWordListening();
-            });
-        }
-
-        if (ttsButton) {
-            ttsButton.addEventListener('click', toggleTTS);
-        }
-
 
         document.addEventListener('DOMContentLoaded', () => {
-            const canvasEl = document.getElementById('camera-canvas');
-            if (canvasEl) canvasEl.remove(); // Still remove if it was missed previously
+            setPlaceholder(); 
+            window.addEventListener('resize', setPlaceholder); 
 
-            loadChatHistory();
-            if (chatBox.children.length <= 1 && isBackendConfigured()) {
-                const hasActualMessages = Array.from(chatBox.children).some(child =>
-                    child.classList.contains('user-message') ||
-                    (child.classList.contains('ai-message') && !child.classList.contains('thinking-message') && !child.classList.contains('system-message'))
-                );
-                 if(!hasActualMessages && !getChatHistory().length) {
-                    addInitialAiGreeting();
-                }
-            }
-
-            // Initialize speech recognition (checks support, sets up `recognition` object)
-            // It doesn't start listening automatically.
-            if (SpeechRecognition) {
-                initializeSpeechRecognition();
+            if (checkBackendConfigured()) {
+                 addInitialAiGreeting();
             } else {
-                console.warn("Speech Recognition API not supported. STT features will be unavailable.");
-                if(micButton) { micButton.disabled = true; micButton.title = "Speech input not supported"; }
-                if(wakeWordButton) { wakeWordButton.disabled = true; wakeWordButton.title = "Wake word not supported"; }
-                updateListeningStatus("Speech features not available in this browser.", true);
-                setTimeout(() => updateListeningStatus("", false), 5000);
+                addMessageToChatBox('Welcome! Please configure the backend URL in the script to activate Subrat AI.', 'system-notification');
             }
-
-            // Set initial state of TTS button
-            if (ttsButton) {
-                const icon = ttsButton.querySelector('i');
-                if (autoSpeakAIResponses) {
-                    icon.classList.remove('fa-volume-mute');
-                    icon.classList.add('fa-volume-up');
-                    ttsButton.classList.add('active');
-                    ttsButton.title = "Mute AI Speech Output";
-                } else {
-                    icon.classList.remove('fa-volume-up');
-                    icon.classList.add('fa-volume-mute');
-                    ttsButton.classList.remove('active');
-                    ttsButton.title = "Unmute AI Speech Output";
-                }
-            }
-             updateListeningStatus("", false); // Ensure status is hidden initially
         });
     </script>
 </body>
