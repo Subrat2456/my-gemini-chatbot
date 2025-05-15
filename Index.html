@@ -613,7 +613,7 @@
         
         function checkBackendConfigured() {
             if (YOUR_BACKEND_URL === PLACEHOLDER_BACKEND_URL) {
-                addMessageToChatBox('Backend URL not configured. Please update YOUR_BACKEND_URL in the script.', 'system-notification', false, true);
+                addMessageToChatBox(`Backend URL not configured. Please update YOUR_BACKEND_URL in the script. It is currently set to the placeholder: "${PLACEHOLDER_BACKEND_URL}"`, 'system-notification', false, true);
                 return false;
             }
             return true;
@@ -646,7 +646,8 @@
                 addMessageToChatBox("Chat session reset. Awaiting your command.", 'system-notification');
             } catch (error) {
                 console.error('Error resetting chat:', error);
-                addMessageToChatBox(`Error resetting chat: ${error.message}`, 'ai', false, true);
+                // MODIFIED ERROR MESSAGE
+                addMessageToChatBox(`Error resetting chat with ${YOUR_BACKEND_URL}: ${error.message}. Please check if the backend server is running and accessible.`, 'ai', false, true);
             }
         });
 
@@ -807,7 +808,8 @@
                 if (thinkingMessageDiv && thinkingMessageDiv.parentNode === chatBox) {
                     chatBox.removeChild(thinkingMessageDiv);
                 }
-                addMessageToChatBox(`Error: ${error.message}`, 'ai', false, true);
+                // MODIFIED ERROR MESSAGE
+                addMessageToChatBox(`Error sending message to ${YOUR_BACKEND_URL}: ${error.message}. Please check if the backend server is running and accessible.`, 'ai', false, true);
             }
         }
 
@@ -943,7 +945,8 @@
             if (checkBackendConfigured()) {
                  addInitialAiGreeting();
             } else {
-                addMessageToChatBox('Welcome! Please configure the backend URL in the script to activate Subrat AI.', 'system-notification');
+                // This message is displayed if YOUR_BACKEND_URL is still the placeholder.
+                // The message in checkBackendConfigured is now more specific.
             }
         });
     </script>
